@@ -1,0 +1,18 @@
+{
+    "name": "finally-tools",
+    "owner":{
+        "name": "Didulobster",
+        "email": "didulobster@gmail.com"
+    },
+    "plugins": [
+        {
+            "name": "independent-reviewer",
+            "source": "./independent-reviewer",
+            "version": "1.0.0",
+            "description": "Carry out an independent review of all changes since last commit",
+            "author": {
+                "name": "Didulobster"
+            }
+        }
+    ]
+}
