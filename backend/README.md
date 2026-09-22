@@ -6,6 +6,7 @@ FastAPI app serving the REST API, the SSE price stream and the static frontend o
 uv sync
 uv run uvicorn app.main:app --port 8000   # reads ../.env
 uv run pytest                              # unit tests (LLM mocked)
+uv run market_data_demo.py                 # live terminal view of market data (Ctrl+C to stop)
 ```
 
 | Module | Purpose |
