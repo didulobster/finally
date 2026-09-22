@@ -1,5 +1,7 @@
 # Review 1
 
+> **Archived.** Obsolete. Reviewed the `.claude-plugin/` marketplace config, which was removed in commit `d8aa4f6`.
+
 Compared the working tree with `HEAD` (`5b828e9 remove everything to start over`).
 
 ## Findings

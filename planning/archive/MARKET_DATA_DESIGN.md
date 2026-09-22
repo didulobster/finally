@@ -1,5 +1,7 @@
 # Market Data Backend — Detailed Design
 
+> **Archived.** Alternative, hardened design; **not the baseline**. `../MARKET_DATA_SUMMARY.md` §1 and §8 list which parts were adopted and which are deferred. Where they differ (shock probability 0.001 vs 0.0001, finance correlation 0.5 vs 0.6, `session_open`, `MarketConfig`, locks, backoff, heartbeat), the summary wins.
+
 **Status:** design, ready to implement. Every code block below was executed and
 asserted against `massive` 2.8.0, `numpy` 2.4.6 and `fastapi` 0.141.1 before
 being written down; §14 lists what was measured and how.

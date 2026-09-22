@@ -159,9 +159,8 @@ Both the simulator and the Massive client implement the same abstract interface.
 ### Massive API (Optional)
 
 - REST API polling (not WebSocket) — simpler, works on all tiers
-- Polls for the union of all watched tickers on a configurable interval
-- Free tier (5 calls/min): poll every 15 seconds
-- Paid tiers: poll every 2-15 seconds depending on tier
+- Polls for the union of all watched tickers in one snapshot call, every 15 seconds by default
+- Requires the Stocks Starter plan or higher: the free tier has no snapshot endpoint (end-of-day data only), so free-tier users should use the simulator
 - Parses REST response into the same format as the simulator
 
 ### Shared Price Cache
@@ -176,7 +175,7 @@ Both the simulator and the Massive client implement the same abstract interface.
 - Endpoint: `GET /api/stream/prices`
 - Long-lived SSE connection; client uses native `EventSource` API
 - Server pushes price updates for all tickers known to the system at a regular cadence (~500ms) — in the single-user model this is equivalent to the user's watchlist
-- Each SSE event contains ticker, price, previous price, timestamp, and change direction
+- Each SSE event is one JSON object keyed by ticker; each entry contains ticker, price, previous price, timestamp, change, change percent, and change direction (see `MARKET_DATA_SUMMARY.md`)
 - Client handles reconnection automatically (EventSource has built-in retry)
 
 ---
