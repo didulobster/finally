@@ -31,7 +31,7 @@ One `docker run` opens `http://localhost:8000` to a live, data-dense trading ter
 
 - [ ] Verify the backend against PLAN.md end to end; fill any gaps and fix real bugs (keep the existing code, no rewrite)
 - [ ] Next.js + TypeScript static-export frontend in `frontend/`, Tailwind dark theme
-- [ ] Watchlist panel: ticker, live price with green/red flash, change %, sparkline accumulated from SSE
+- [ ] Watchlist panel: ticker, live price, change %
 - [ ] Main chart for the selected ticker (click in the watchlist to select)
 - [ ] Portfolio heatmap (treemap sized by weight, colored by P&L)
 - [ ] P&L line chart from portfolio snapshots
@@ -40,7 +40,6 @@ One `docker run` opens `http://localhost:8000` to a live, data-dense trading ter
 - [ ] AI chat panel (history, loading state, inline trade and watchlist confirmations)
 - [ ] Header with live total value, cash balance, and connection status dot (green/yellow/red)
 - [ ] Watchlist add/remove from the UI
-- [ ] Frontend unit tests (component rendering, flash, calculations, chat)
 - [ ] Docker image builds; the container serves the app on :8000 with a persistent volume
 - [ ] All 6 existing Playwright E2E specs pass in Docker with `LLM_MOCK=true`
 
@@ -51,6 +50,7 @@ One `docker run` opens `http://localhost:8000` to a live, data-dense trading ter
 - WebSockets — SSE is enough for one-way push
 - Token-by-token LLM streaming — Cerebras is fast enough; a loading indicator is enough
 - Cloud deployment (Terraform/App Runner in `deploy/`) — stretch goal, not part of "done"
+- Price flash animation, sparklines, frontend unit tests — deferred to v2 (not checked by E2E; user choice)
 - Broad backend hardening from CONCERNS.md (indexes, logging config, graceful shutdown, etc.) — only fix issues that break PLAN.md behavior or tests
 
 ## Context
