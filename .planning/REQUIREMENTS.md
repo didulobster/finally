@@ -95,12 +95,39 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
+| BACK-01 | Phase 1 | Pending |
+| BACK-02 | Phase 1 | Pending |
+| FND-01 | Phase 1 | Pending |
+| FND-02 | Phase 1 | Pending |
+| HDR-01 | Phase 1 | Pending |
+| HDR-02 | Phase 2 | Pending |
+| HDR-03 | Phase 1 | Pending |
+| HDR-04 | Phase 1 | Pending |
+| WTCH-01 | Phase 1 | Pending |
+| WTCH-02 | Phase 3 | Pending |
+| WTCH-03 | Phase 3 | Pending |
+| WTCH-04 | Phase 3 | Pending |
+| WTCH-05 | Phase 3 | Pending |
+| CHRT-01 | Phase 3 | Pending |
+| CHRT-02 | Phase 3 | Pending |
+| TRAD-01 | Phase 2 | Pending |
+| TRAD-02 | Phase 2 | Pending |
+| PORT-01 | Phase 2 | Pending |
+| PORT-02 | Phase 2 | Pending |
+| PORT-03 | Phase 2 | Pending |
+| PORT-04 | Phase 2 | Pending |
+| CHAT-01 | Phase 4 | Pending |
+| CHAT-02 | Phase 4 | Pending |
+| CHAT-03 | Phase 4 | Pending |
+| CHAT-04 | Phase 4 | Pending |
+| DLVR-01 | Phase 1 | Pending |
+| DLVR-02 | Phase 4 | Pending |
 
 **Coverage:**
 - v1 requirements: 27 total
-- Mapped to phases: 0
-- Unmapped: 27 ⚠️
+- Mapped to phases: 27
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-09-25*
-*Last updated: 2026-09-25 after initial definition*
+*Last updated: 2026-09-25 after roadmap creation*
