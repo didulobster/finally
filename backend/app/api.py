@@ -6,7 +6,7 @@ from fastapi import APIRouter, HTTPException, Request
 from pydantic import BaseModel, Field
 
 from . import actions, portfolio, watchlist
-from .chat import handle_message
+from .chat import get_history, handle_message
 from .market import MarketDataSource, PriceCache
 
 router = APIRouter(prefix="/api")
@@ -86,6 +86,11 @@ async def remove_from_watchlist(ticker: str, request: Request) -> dict:
     except ValueError as e:
         raise HTTPException(400, str(e))
     return {"ticker": ticker, "removed": True}
+
+
+@router.get("/chat")
+async def chat_history() -> list[dict]:
+    return get_history()
 
 
 @router.post("/chat")

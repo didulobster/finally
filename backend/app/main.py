@@ -9,6 +9,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
+from starlette.exceptions import HTTPException
 
 from . import actions, portfolio
 from .api import router
@@ -21,6 +22,22 @@ logger = logging.getLogger(__name__)
 
 SNAPSHOT_INTERVAL = 30.0
 STATIC_DIR = Path(os.getenv("STATIC_DIR", Path(__file__).resolve().parents[1] / "static"))
+
+
+class SPAStaticFiles(StaticFiles):
+    """Static files that serve index.html for unknown page routes (not /api, no file extension)."""
+
+    async def get_response(self, path: str, scope):
+        is_page = not path.startswith("api") and "." not in Path(path).name
+        try:
+            response = await super().get_response(path, scope)
+        except HTTPException as e:
+            if e.status_code != 404 or not is_page:
+                raise
+            response = None
+        if is_page and (response is None or response.status_code == 404):
+            return await super().get_response("index.html", scope)
+        return response
 
 
 async def snapshot_loop(cache: PriceCache) -> None:
@@ -53,7 +70,7 @@ def create_app() -> FastAPI:
     app.include_router(router)
     app.include_router(create_stream_router(cache))
     if STATIC_DIR.is_dir():
-        app.mount("/", StaticFiles(directory=STATIC_DIR, html=True), name="static")
+        app.mount("/", SPAStaticFiles(directory=STATIC_DIR, html=True), name="static")
     return app
 
 

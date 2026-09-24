@@ -3,6 +3,11 @@
 from dataclasses import dataclass
 
 
+def percent_change(start: float, end: float) -> float:
+    """Percent change from start to end; 0 when start is 0."""
+    return round((end - start) / start * 100, 4) if start else 0.0
+
+
 @dataclass(frozen=True, slots=True)
 class PriceUpdate:
     """One price observation for one ticker."""
@@ -11,6 +16,7 @@ class PriceUpdate:
     price: float
     previous_price: float
     timestamp: float  # unix seconds
+    open_price: float  # first price seen this server session
 
     @property
     def change(self) -> float:
@@ -18,9 +24,11 @@ class PriceUpdate:
 
     @property
     def change_percent(self) -> float:
-        if self.previous_price == 0:
-            return 0.0
-        return round((self.price - self.previous_price) / self.previous_price * 100, 4)
+        return percent_change(self.previous_price, self.price)
+
+    @property
+    def session_change_percent(self) -> float:
+        return percent_change(self.open_price, self.price)
 
     @property
     def direction(self) -> str:
@@ -39,4 +47,6 @@ class PriceUpdate:
             "change": self.change,
             "change_percent": self.change_percent,
             "direction": self.direction,
+            "open_price": self.open_price,
+            "session_change_percent": self.session_change_percent,
         }
