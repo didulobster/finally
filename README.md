@@ -4,7 +4,7 @@ An AI-powered trading workstation that streams live market data, lets you trade 
 
 Built entirely by coding agents as the capstone project for an agentic AI coding course.
 
-> **Status:** not yet built. The full specification is in [`planning/PLAN.md`](planning/PLAN.md).
+The full specification is in [`planning/PLAN.md`](planning/PLAN.md).
 
 ## Planned Features
 
@@ -20,14 +20,18 @@ Built entirely by coding agents as the capstone project for an agentic AI coding
 - **AI:** LiteLLM → OpenRouter (`openai/gpt-oss-120b` on Cerebras)
 - **Deploy:** a single Docker container on port 8000
 
-## Quick Start (once built)
+## Quick Start
 
 ```bash
 cp .env.example .env        # add your OPENROUTER_API_KEY
 ./scripts/start_mac.sh      # Windows: scripts/start_windows.ps1
 ```
 
-Then open http://localhost:8000. Stop with `./scripts/stop_mac.sh`.
+Then open http://localhost:8000. Stop with `./scripts/stop_mac.sh` (Windows: `scripts/stop_windows.ps1`).
+
+- `--build` (Windows: `-Build`) forces an image rebuild after code changes; `--no-open` skips opening the browser.
+- Data lives in the `finally-data` Docker volume and survives restarts; `docker volume rm finally-data` resets it.
+- Alternative: `docker compose up --build`.
 
 ## Environment Variables
 

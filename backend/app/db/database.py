@@ -2,7 +2,7 @@
 
 import os
 from collections.abc import Iterator
-from contextlib import contextmanager
+from contextlib import closing, contextmanager
 import sqlite3
 import uuid
 from datetime import UTC, datetime
@@ -29,12 +29,21 @@ def new_id() -> str:
 
 @contextmanager
 def connect() -> Iterator[sqlite3.Connection]:
-    """Yield a connection with dict-like rows; commit on success, always close."""
-    conn = sqlite3.connect(db_path())
+    """Yield a connection inside one serialized transaction; commit on success, roll back on error.
+
+    BEGIN IMMEDIATE takes the write lock up front, so read-then-write logic
+    (e.g. checking cash before a trade) cannot interleave with another writer.
+    """
+    conn = sqlite3.connect(db_path(), isolation_level=None)
     conn.row_factory = sqlite3.Row
     try:
-        with conn:
+        conn.execute("BEGIN IMMEDIATE")
+        try:
             yield conn
+        except BaseException:
+            conn.execute("ROLLBACK")
+            raise
+        conn.execute("COMMIT")
     finally:
         conn.close()
 
@@ -42,8 +51,9 @@ def connect() -> Iterator[sqlite3.Connection]:
 def init_db() -> None:
     """Create tables if missing and seed the default user and watchlist once."""
     db_path().parent.mkdir(parents=True, exist_ok=True)
-    with connect() as conn:
+    with closing(sqlite3.connect(db_path())) as conn:
         conn.executescript(SCHEMA.read_text())
+    with connect() as conn:
         if conn.execute("SELECT 1 FROM users_profile WHERE id = ?", (DEFAULT_USER,)).fetchone():
             return
         conn.execute(

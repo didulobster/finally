@@ -15,13 +15,23 @@ def portfolio_context(cache: PriceCache) -> dict:
     return {"portfolio": portfolio.get_portfolio(cache), "watchlist_prices": prices}
 
 
-def load_history() -> list[dict]:
+def get_history(limit: int = HISTORY_LIMIT) -> list[dict]:
+    """Recent chat messages, oldest first, with actions parsed from JSON."""
     with connect() as conn:
         rows = conn.execute(
-            "SELECT role, content FROM chat_messages WHERE user_id = ? ORDER BY created_at DESC, rowid DESC LIMIT ?",
-            (DEFAULT_USER, HISTORY_LIMIT),
+            "SELECT id, role, content, actions, created_at FROM chat_messages WHERE user_id = ? "
+            "ORDER BY created_at DESC, rowid DESC LIMIT ?",
+            (DEFAULT_USER, limit),
         ).fetchall()
-    return [{"role": r["role"], "content": r["content"]} for r in reversed(rows)]
+    return [
+        {**dict(r), "actions": json.loads(r["actions"]) if r["actions"] else None}
+        for r in reversed(rows)
+    ]
+
+
+def load_history() -> list[dict]:
+    """Prior conversation in LLM message format."""
+    return [{"role": m["role"], "content": m["content"]} for m in get_history()]
 
 
 def save_message(role: str, content: str, actions_taken: dict | None = None) -> None:

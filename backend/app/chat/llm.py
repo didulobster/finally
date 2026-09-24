@@ -2,6 +2,7 @@
 
 import asyncio
 import json
+import logging
 import os
 import re
 from typing import Literal
@@ -11,6 +12,9 @@ from pydantic import BaseModel, ValidationError
 
 MODEL = "openrouter/openai/gpt-oss-120b"
 EXTRA_BODY = {"provider": {"order": ["cerebras"]}}
+PROVIDER_ERROR_MESSAGE = "Sorry, I couldn't reach the AI service right now. Please try again in a moment."
+
+logger = logging.getLogger(__name__)
 
 SYSTEM_PROMPT = """You are FinAlly, an AI trading assistant in a simulated trading workstation (fake money).
 - Analyze portfolio composition, risk concentration and P&L.
@@ -77,15 +81,19 @@ def mock_response(user_message: str) -> ChatResponse:
 
 
 async def ask_llm(messages: list[dict]) -> ChatResponse:
-    """Return the assistant's structured reply, or a mock when LLM_MOCK=true."""
+    """Return the assistant's structured reply, a mock when LLM_MOCK=true, or an apology if the provider fails."""
     if os.getenv("LLM_MOCK", "").lower() == "true":
         return mock_response(messages[-1]["content"])
-    response = await asyncio.to_thread(
-        completion,
-        model=MODEL,
-        messages=messages,
-        response_format=ChatResponse,
-        reasoning_effort="low",
-        extra_body=EXTRA_BODY,
-    )
+    try:
+        response = await asyncio.to_thread(
+            completion,
+            model=MODEL,
+            messages=messages,
+            response_format=ChatResponse,
+            reasoning_effort="low",
+            extra_body=EXTRA_BODY,
+        )
+    except Exception:
+        logger.exception("LLM call failed")
+        return ChatResponse(message=PROVIDER_ERROR_MESSAGE, trades=[], watchlist_changes=[])
     return parse_response(response.choices[0].message.content)

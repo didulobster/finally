@@ -1,0 +1,12 @@
+{
+  "name": "finally-e2e",
+  "version": "1.0.0",
+  "scripts": {
+    "test": "playwright test"
+  },
+  "private": true,
+  "devDependencies": {
+    "@playwright/test": "^1.63.0",
+    "@types/node": "^26.6.2"
+  }
+}

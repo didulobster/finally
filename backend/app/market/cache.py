@@ -23,6 +23,7 @@ class PriceCache:
                 price=round(price, 2),
                 previous_price=prev.price if prev else round(price, 2),
                 timestamp=timestamp or time.time(),
+                open_price=prev.open_price if prev else round(price, 2),
             )
             self._prices[ticker] = update
             self.version += 1
