@@ -1,0 +1,16 @@
+.git
+.github
+.claude
+.env
+db
+planning
+test
+scripts
+**/__pycache__
+**/.pytest_cache
+backend/.venv
+backend/static
+backend/tests
+frontend/node_modules
+frontend/.next
+frontend/out

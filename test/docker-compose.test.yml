@@ -1,0 +1,36 @@
+# Run from the repo root:
+#   docker compose -f test/docker-compose.test.yml up --build --abort-on-container-exit --exit-code-from playwright
+# Tear down (drops the throwaway DB volume):
+#   docker compose -f test/docker-compose.test.yml down -v
+services:
+  finally:
+    build:
+      context: ..
+    environment:
+      LLM_MOCK: "true"
+      MASSIVE_API_KEY: ""
+      OPENROUTER_API_KEY: "unused-in-mock-mode"
+    tmpfs:
+      - /app/db
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/health')"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+
+  playwright:
+    image: mcr.microsoft.com/playwright:v1.63.0-noble
+    working_dir: /tests
+    environment:
+      BASE_URL: http://finally:8000
+      CI: "true"
+    volumes:
+      - .:/tests
+      - /tests/node_modules
+    command: sh -c "npm ci && npx playwright test"
+    depends_on:
+      finally:
+        condition: service_healthy
+
+volumes:
+  e2e-db:
