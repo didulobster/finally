@@ -30,7 +30,12 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. The header status dot shows connected (green) while streaming, changes to reconnecting/disconnected when the stream drops, and returns to connected with prices resuming, without a page reload
   4. The backend has been checked against PLAN.md (market data, SSE, DB init/seed, portfolio, watchlist, chat, health), any gaps that break PLAN.md behavior are fixed, and the existing pytest suite passes
   5. The E2E specs `01-fresh-start` (health and fresh-start tests) and `06-sse-reconnect` pass against the container
-**Plans**: TBD
+**Plans**: 3 plans
+
+Plans:
+- [ ] 01-01-PLAN.md — Verify the backend against PLAN.md §5-§9 on a live fresh-DB server; fix only breaking gaps test-first (BACK-01, BACK-02)
+- [ ] 01-02-PLAN.md — Walking skeleton: Next.js static export built and served by the Docker container, then one Zustand store + one EventSource driving header, status and 10 live rows (local E2E green)
+- [ ] 01-03-PLAN.md — Full D-01 terminal grid (panels, collapsible chat drawer, 100vh), then the Docker E2E phase gate for 01-fresh-start + 06-sse-reconnect
 **UI hint**: yes
 
 ### Phase 2: Trading & Portfolio
