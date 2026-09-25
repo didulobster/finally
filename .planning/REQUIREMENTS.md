@@ -9,8 +9,8 @@ Requirements for initial release. Each maps to roadmap phases. The six specs in 
 
 ### Backend
 
-- [ ] **BACK-01**: Backend behavior is verified against `planning/PLAN.md` end to end (market data, SSE, DB init/seed, portfolio, watchlist, chat, health), keeping the existing code
-- [ ] **BACK-02**: Any gap or bug that breaks PLAN.md behavior or an E2E spec is fixed, and existing pytest tests still pass
+- [x] **BACK-01**: Backend behavior is verified against `planning/PLAN.md` end to end (market data, SSE, DB init/seed, portfolio, watchlist, chat, health), keeping the existing code
+- [x] **BACK-02**: Any gap or bug that breaks PLAN.md behavior or an E2E spec is fixed, and existing pytest tests still pass
 
 ### Frontend Foundation
 
@@ -95,8 +95,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| BACK-01 | Phase 1 | Pending |
-| BACK-02 | Phase 1 | Pending |
+| BACK-01 | Phase 1 | Complete |
+| BACK-02 | Phase 1 | Complete |
 | FND-01 | Phase 1 | Pending |
 | FND-02 | Phase 1 | Pending |
 | HDR-01 | Phase 1 | Pending |
@@ -124,6 +124,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | DLVR-02 | Phase 4 | Pending |
 
 **Coverage:**
+
 - v1 requirements: 27 total
 - Mapped to phases: 27
 - Unmapped: 0
