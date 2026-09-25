@@ -210,3 +210,4 @@ __marimo__/
 db/*.db
 db/*.db-journal
 !db/.gitkeep
+backend/static/
