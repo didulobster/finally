@@ -14,19 +14,19 @@ Requirements for initial release. Each maps to roadmap phases. The six specs in 
 
 ### Frontend Foundation
 
-- [ ] **FND-01**: `frontend/` is a Next.js + TypeScript project that builds as a static export (`output: 'export'`) with a Tailwind dark theme using the PLAN.md colors
-- [ ] **FND-02**: All API and SSE calls use same-origin relative paths (`/api/...`)
+- [x] **FND-01**: `frontend/` is a Next.js + TypeScript project that builds as a static export (`output: 'export'`) with a Tailwind dark theme using the PLAN.md colors
+- [x] **FND-02**: All API and SSE calls use same-origin relative paths (`/api/...`)
 
 ### Header & Connection
 
-- [ ] **HDR-01**: User sees their cash balance (`cash-balance`) in the header
+- [x] **HDR-01**: User sees their cash balance (`cash-balance`) in the header
 - [ ] **HDR-02**: User sees total portfolio value (`total-value` = cash + live positions value), updating on every price tick and after every trade
-- [ ] **HDR-03**: User sees a connection status dot (`connection-status`, `data-status`) that is green/connected, yellow/reconnecting, or red/disconnected
-- [ ] **HDR-04**: When the SSE connection drops and returns, the status goes back to connected and prices resume without a page reload
+- [x] **HDR-03**: User sees a connection status dot (`connection-status`, `data-status`) that is green/connected, yellow/reconnecting, or red/disconnected
+- [x] **HDR-04**: When the SSE connection drops and returns, the status goes back to connected and prices resume without a page reload
 
 ### Watchlist
 
-- [ ] **WTCH-01**: On a fresh start, user sees exactly the 10 default tickers (`watchlist-row-{TICKER}`) with live-changing prices (`watchlist-price-{TICKER}`)
+- [x] **WTCH-01**: On a fresh start, user sees exactly the 10 default tickers (`watchlist-row-{TICKER}`) with live-changing prices (`watchlist-price-{TICKER}`)
 - [ ] **WTCH-02**: User can add a ticker by typing it (any case) into `watchlist-add-input` and clicking `watchlist-add-button`; it appears uppercased with a live price
 - [ ] **WTCH-03**: User can remove a ticker with `watchlist-remove-{TICKER}`, which appears on row hover
 - [ ] **WTCH-04**: Watchlist changes persist across page reload (fetched from the server on mount)
@@ -58,7 +58,7 @@ Requirements for initial release. Each maps to roadmap phases. The six specs in 
 
 ### Delivery
 
-- [ ] **DLVR-01**: The Docker image builds, and the container serves the app and API on port 8000 with the SQLite DB on a persistent volume
+- [x] **DLVR-01**: The Docker image builds, and the container serves the app and API on port 8000 with the SQLite DB on a persistent volume
 - [ ] **DLVR-02**: All 6 Playwright E2E specs pass in Docker via `test/docker-compose.test.yml` with `LLM_MOCK=true`
 
 ## v2 Requirements
@@ -97,13 +97,13 @@ Which phases cover which requirements. Updated during roadmap creation.
 |-------------|-------|--------|
 | BACK-01 | Phase 1 | Complete |
 | BACK-02 | Phase 1 | Complete |
-| FND-01 | Phase 1 | Pending |
-| FND-02 | Phase 1 | Pending |
-| HDR-01 | Phase 1 | Pending |
+| FND-01 | Phase 1 | Complete |
+| FND-02 | Phase 1 | Complete |
+| HDR-01 | Phase 1 | Complete |
 | HDR-02 | Phase 2 | Pending |
-| HDR-03 | Phase 1 | Pending |
-| HDR-04 | Phase 1 | Pending |
-| WTCH-01 | Phase 1 | Pending |
+| HDR-03 | Phase 1 | Complete |
+| HDR-04 | Phase 1 | Complete |
+| WTCH-01 | Phase 1 | Complete |
 | WTCH-02 | Phase 3 | Pending |
 | WTCH-03 | Phase 3 | Pending |
 | WTCH-04 | Phase 3 | Pending |
@@ -120,7 +120,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | CHAT-02 | Phase 4 | Pending |
 | CHAT-03 | Phase 4 | Pending |
 | CHAT-04 | Phase 4 | Pending |
-| DLVR-01 | Phase 1 | Pending |
+| DLVR-01 | Phase 1 | Complete |
 | DLVR-02 | Phase 4 | Pending |
 
 **Coverage:**
