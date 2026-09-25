@@ -430,13 +430,15 @@ Still to walk per D-13, from the code: §5 env handling (`factory.py` Massive vs
 | A1 | The Docker-compose E2E gate command (`docker compose … run --rm playwright sh -c "npm ci && npx playwright test <files> --grep-invert …"`) works with this compose file. The `run` flags were confirmed from `docker compose run --help`, but the full command was not executed against the repo, since the repo has no `frontend/` yet. | Validation Architecture | Low. Fall back to `up` with a temporary command edit, or run Playwright locally against the container on :8000. |
 | A2 | Chromium keeps retrying at the `retry` interval without exponential backoff. Only one short drop was observed. | Pitfalls | Low. The test allows 20s. |
 
-## Open Questions
+## Open Questions (RESOLVED)
 
-1. **Keep `frontend/AGENTS.md` + `frontend/CLAUDE.md` from the scaffold?**
+1. **Keep `frontend/AGENTS.md` + `frontend/CLAUDE.md` from the scaffold?** (RESOLVED)
    - Known: they tell agents to read `node_modules/next/dist/docs/` for Next 16 APIs, and `next dev` re-adds the block.
    - Recommendation: keep and commit them. They are harmless and help later executors.
-2. **Initial `data-status` before the first `onopen`?**
+   - **RESOLVED: keep.** Adopted in plan 01-02 Task 1 (step 9): both files stay unchanged and are committed; they are listed in 01-02 `files_modified`.
+2. **Initial `data-status` before the first `onopen`?** (RESOLVED)
    - Recommendation: `reconnecting` (yellow). The E2E only checks `connected` and not-`connected`.
+   - **RESOLVED: `reconnecting`.** Adopted in plan 01-02 (`frontend/store/terminal.ts`): the zustand store's initial `status` is `"reconnecting"`, and threat T-01-08 relies on it.
 
 ## Environment Availability
 
