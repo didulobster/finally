@@ -3,16 +3,16 @@ gsd_state_version: "1.0"
 current_phase: 01
 current_phase_name: Live Terminal in Docker
 status: executing
-stopped_at: Completed 01-01-PLAN.md
-last_updated: "2026-09-25T03:56:37.936Z"
+stopped_at: Completed 01-02-PLAN.md
+last_updated: "2026-09-25T04:02:23.170Z"
 last_activity: 2026-09-25
 last_activity_desc: Phase 01 execution started
-state_head: 9af5e6bca7771d4e01fcbae26be21db17bf48940
+state_head: d378e9046b3df66e732da1a7ef2577708e84fc58
 progress:
   total_phases: 4
   completed_phases: 0
   total_plans: 3
-  completed_plans: 1
+  completed_plans: 2
   percent: 0
 ---
 
@@ -28,7 +28,7 @@ See: .planning/PROJECT.md (updated 2026-09-25)
 ## Current Position
 
 Phase: 01 (Live Terminal in Docker) — EXECUTING
-Plan: 2 of 3
+Plan: 3 of 3
 Status: Ready to execute
 Last activity: 2026-09-25 — Phase 01 execution started
 
@@ -59,6 +59,7 @@ Progress: [░░░░░░░░░░] 0%
 | Plan | Duration | Tasks | Files |
 |------|----------|-------|-------|
 | Phase 01 P01 | 3 min | 2 tasks | 1 files |
+| Phase 01 P02 | 4 min | 2 tasks | 20 files |
 
 ## Accumulated Context
 
@@ -71,6 +72,7 @@ Recent decisions affecting current work:
 - [Roadmap]: Backend verification (BACK-01/02) goes in Phase 1; later phases fix backend bugs only when a spec exposes them
 - [Roadmap]: Price flash, sparklines, and frontend unit tests are deferred to v2
 - [Phase 01]: Backend verified against PLAN.md §5-§9: zero breaking gaps, no backend changes in 01-01 (BACK-01/02)
+- [Phase 01]: Frontend skeleton: Next 16.3.6 static export + one zustand store (useTerminal) + one EventSource via connect(); code under app/, components/, store/ (never lib/)
 
 ### Pending Todos
 
@@ -91,6 +93,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-09-25T03:56:37.926Z
-Stopped at: Completed 01-01-PLAN.md
+Last session: 2026-09-25T04:02:23.159Z
+Stopped at: Completed 01-02-PLAN.md
 Resume file: None
