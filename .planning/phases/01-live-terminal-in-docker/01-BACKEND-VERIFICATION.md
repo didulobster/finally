@@ -87,3 +87,8 @@ Result values: PASS, GAP, FIXED (<test>), OUT OF SCOPE, NOT EXERCISED.
 | §12 backend unit tests pass | `UV_CACHE_DIR=$TMPDIR/uvcache uv run --directory backend pytest -q` gives `75 passed, 2 warnings in 2.36s` (0 failed, 0 errors, 0 skipped; the warnings are Starlette/anyio deprecations in third-party code). | PASS |
 
 ## Fixes
+
+No breaking gaps found; no backend changes.
+
+- Checked and ruled out: the first SSE event showed AAPL at 190.0 flat, which looked like a possible simulator reset after the trade. Three follow-up reads gave 190.02, 190.0, 189.98 with `open_price` 190.0, so it is the normal cent-level random walk, not a reset.
+- Error text is capitalized (`Insufficient cash`, `Insufficient shares`, `portfolio.py:30,36`). Both E2E specs match case-insensitively (`/insufficient cash/i`, `/insufficient shares/i`), so this is not a gap.
