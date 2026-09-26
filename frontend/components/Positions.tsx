@@ -1,13 +1,24 @@
 "use client";
 
+import { PanelNote } from "@/components/Panel";
 import { formatPercent, formatPrice, formatQty, formatSignedPrice } from "@/store/format";
+import { livePrice } from "@/store/portfolio";
 import { useTerminal, type Position } from "@/store/terminal";
 
 const TH = "px-2 text-[11px] font-normal uppercase tracking-widest text-muted";
 
 /** Held positions in server (alphabetical) order, with live price, P&L and %. */
 export function Positions() {
+  const cash = useTerminal((s) => s.cash);
   const positions = useTerminal((s) => s.positions);
+  if (cash === null) return <PanelNote>Loading positions…</PanelNote>;
+  if (positions.length === 0) {
+    return (
+      <p data-testid="positions-empty" className="p-3 text-xs text-muted">
+        No positions yet. Buy a ticker from the trade bar to open one.
+      </p>
+    );
+  }
   return (
     <table className="w-full font-mono text-sm tabular-nums">
       <thead className="sticky top-0 bg-panel">
@@ -31,7 +42,7 @@ export function Positions() {
 
 function PositionRow({ position }: { position: Position }) {
   const { ticker, quantity, avg_cost } = position;
-  const live = useTerminal((s) => s.prices[ticker]?.price) ?? position.current_price;
+  const live = useTerminal((s) => livePrice(position, s.prices));
   const pnl = (live - avg_cost) * quantity;
   const color = pnl > 0 ? "text-up" : pnl < 0 ? "text-down" : "text-muted";
   return (

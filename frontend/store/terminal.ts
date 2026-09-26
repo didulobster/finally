@@ -20,7 +20,7 @@ export type Price = {
 /** A held position as returned by /api/portfolio. */
 export type Position = { ticker: string; quantity: number; avg_cost: number; current_price: number };
 
-type Portfolio = { cash_balance: number; positions: Position[]; total_value: number };
+type Portfolio = { cash_balance: number; positions: Position[] };
 
 /** Outcome of a trade, shown by the trade bar. */
 export type TradeResult = { ok: boolean; text: string };
@@ -32,7 +32,6 @@ export type TerminalState = {
   watchlist: string[];
   cash: number | null;
   positions: Position[];
-  totalValue: number | null;
 };
 
 type WatchlistItem = Price | { ticker: string; price: null };
@@ -44,12 +43,11 @@ export const useTerminal = create<TerminalState>()(() => ({
   watchlist: [],
   cash: null,
   positions: [],
-  totalValue: null,
 }));
 
 /** Write a server portfolio (GET /api/portfolio or a trade response) into the store. */
 export function applyPortfolio(p: Portfolio): void {
-  useTerminal.setState({ cash: p.cash_balance, positions: p.positions, totalValue: p.total_value });
+  useTerminal.setState({ cash: p.cash_balance, positions: p.positions });
 }
 
 /** Place a market order; the store changes only when the server fills it. */
