@@ -77,7 +77,21 @@ Plans:
   4. With positions held, the user sees a treemap heatmap sized by weight, with tiles colored green for profit and red for loss, and a canvas P&L line chart of portfolio value from snapshots; with no positions, an empty-positions message is shown
   5. The E2E specs `03-trading` and `04-portfolio-viz` pass against the container
 
-**Plans**: TBD
+**Plans**: 3 plans
+
+Plans:
+**Wave 1**
+
+- [ ] 02-01-PLAN.md — Trade bar to store to header and positions (tracer), then live derived total/P&L, positions empty/loading states and the portfolio probe; local 01 + 03 + 06 green (TRAD-01, TRAD-02, HDR-02, PORT-01, PORT-02)
+
+**Wave 2** *(blocked on Wave 1 completion)*
+
+- [ ] 02-02-PLAN.md — Package legitimacy checkpoint (blocking-human), P&L chart on Lightweight Charts (tracer), then the d3-hierarchy heatmap; local 01 + 03 + 04 + 06 green (PORT-03, PORT-04)
+
+**Wave 3** *(blocked on Wave 2 completion)*
+
+- [ ] 02-03-PLAN.md — Rebuild the `finally` tag and pass the probe in a container (tracer), then the compose Docker gate (9 passed), pytest, integrity gates, probe docs and end-of-phase visual checks
+
 **UI hint**: yes
 
 ### Phase 3: Watchlist Management & Ticker Chart
@@ -122,6 +136,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Live Terminal in Docker | 6/6 | Complete    | 2026-09-26 |
-| 2. Trading & Portfolio | 0/TBD | Not started | - |
+| 2. Trading & Portfolio | 0/3 | Planned | - |
 | 3. Watchlist Management & Ticker Chart | 0/TBD | Not started | - |
 | 4. AI Copilot & Definition of Done | 0/TBD | Not started | - |
