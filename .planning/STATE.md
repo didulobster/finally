@@ -2,17 +2,17 @@
 gsd_state_version: "1.0"
 current_phase: 01
 current_phase_name: Live Terminal in Docker
-status: verifying
-stopped_at: Completed 01-03-PLAN.md
-last_updated: "2026-09-25T04:07:09.617Z"
-last_activity: 2026-09-25
+status: executing
+stopped_at: Completed 01-04-PLAN.md
+last_updated: "2026-09-26T02:13:34.440Z"
+last_activity: 2026-09-26
 last_activity_desc: Phase 01 execution started
-state_head: 54020552c8daa21e280e79b30114e2931c854576
+state_head: f8697185f365c7a66f80ed6b939ceddd87417cc4
 progress:
   total_phases: 4
   completed_phases: 0
-  total_plans: 3
-  completed_plans: 3
+  total_plans: 6
+  completed_plans: 4
   percent: 0
 ---
 
@@ -28,9 +28,9 @@ See: .planning/PROJECT.md (updated 2026-09-25)
 ## Current Position
 
 Phase: 01 (Live Terminal in Docker) — EXECUTING
-Plan: 3 of 3
-Status: Phase complete — ready for verification
-Last activity: 2026-09-25 — Phase 01 execution started
+Plan: 2 of 6
+Status: Ready to execute
+Last activity: 2026-09-26 — Phase 01 execution started
 
 Progress: [░░░░░░░░░░] 0%
 
@@ -61,6 +61,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 01 P01 | 3 min | 2 tasks | 1 files |
 | Phase 01 P02 | 4 min | 2 tasks | 20 files |
 | Phase 01 P03 | 3 min | 2 tasks | 4 files |
+| Phase 01 P04 | 3 min | 2 tasks | 35 files |
 
 ## Accumulated Context
 
@@ -76,6 +77,8 @@ Recent decisions affecting current work:
 - [Phase 01]: Frontend skeleton: Next 16.3.6 static export + one zustand store (useTerminal) + one EventSource via connect(); code under app/, components/, store/ (never lib/)
 - [Phase 01]: D-01 grid built: Panel/PanelNote regions + collapsible ChatDrawer; later phases replace PanelNote bodies and add their testids
 - [Phase 01]: Phase 1 Docker gate green on the compose path: 01-fresh-start + 06-sse-reconnect 3 passed, pytest 75 passed
+- [Phase 01]: 01-04: Phase 1 tree is canonical; frontend/src and vitest removed, config restored byte-for-byte from 9745561^
+- [Phase 01]: 01-04: Installed GSD tooling .claude/**/lib/ kept out of commits via explicit ignore after anchoring lib/ (WR-02); commit-or-not deferred to user
 
 ### Pending Todos
 
@@ -96,6 +99,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-09-25T04:07:09.607Z
-Stopped at: Completed 01-03-PLAN.md
+Last session: 2026-09-26T02:13:34.428Z
+Stopped at: Completed 01-04-PLAN.md
 Resume file: None
