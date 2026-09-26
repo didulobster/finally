@@ -1,9 +1,9 @@
 ---
-status: partial
+status: diagnosed
 phase: 01-live-terminal-in-docker
 source: [01-VERIFICATION.md]
 started: 2026-09-25T04:45:00Z
-updated: 2026-09-26T01:34:50Z
+updated: 2026-09-26T01:55:37Z
 ---
 
 ## Current Test
@@ -53,8 +53,25 @@ blocked: 0
   reason: "User reported: only watchlist on the left is showing and the header with status dot."
   severity: major
   test: 1
-  artifacts: []
-  missing: []
+  root_cause: "(a) The running finally:latest image (a8ecec43) was built 2026-09-25T04:01Z from the 01-02 skeleton, before the grid commit 57b1ed1; start_mac.sh reuses an existing image without --build. (b) HEAD cannot rebuild: commit 9745561 added a second app tree frontend/src/, repointed tsconfig @/* to ./src/*, removed zustand (still imported by store/terminal.ts), and .gitignore 'lib/' hides frontend/src/lib/ — npm run build fails with 6 errors, so start_mac.sh --build aborts. USER DECISION: the Phase 1 tree (frontend/app, components, store) is canonical; frontend/src/ comes out of the build."
+  artifacts:
+    - path: "frontend/tsconfig.json"
+      issue: "@/* points to ./src/* instead of ./*"
+    - path: "frontend/package.json"
+      issue: "zustand removed (and from package-lock.json) but store/terminal.ts imports it"
+    - path: "frontend/src/"
+      issue: "second, incomplete app tree conflicting with the Phase 1 tree (plus vitest.config.mts, vitest.setup.ts, src/__tests__)"
+    - path: ".gitignore"
+      issue: "unanchored lib/ (Python template) ignores frontend/**/lib/"
+    - path: "scripts/start_mac.sh"
+      issue: "silently reuses a stale finally image when not passed --build"
+  missing:
+    - "Restore tsconfig @/* to ./*"
+    - "Restore zustand in package.json and package-lock.json"
+    - "Remove frontend/src/ and its vitest config from the build (decide keep/delete of vitest setup)"
+    - "Anchor Python-template lib/ etc. rules in .gitignore"
+    - "Confirm docker build succeeds at HEAD and rebuild the finally tag; served / contains Heatmap and AI Assistant"
+  debug_session: .planning/debug/g-01-1-only-watchlist-shows.md
 
 - gap_id: G-01-2
   truth: "The live price stream recovers without a page reload even when a reconnect attempt gets a non-200 response (e.g. 502 from a proxy during redeploy)"
@@ -62,5 +79,14 @@ blocked: 0
   reason: "User reported: fix it now (code-review WR-01: EventSource closes permanently after a non-200 reconnect; dot stays OFFLINE until reload)"
   severity: major
   test: 2
-  artifacts: []
-  missing: []
+  root_cause: "connect() in frontend/store/terminal.ts:54-59 opens one EventSource and relies only on browser auto-retry. A non-200 or non-event-stream reconnect response makes the browser fail the connection (readyState CLOSED, no further retries); onerror only sets 'disconnected' and nothing ever creates a new EventSource."
+  artifacts:
+    - path: "frontend/store/terminal.ts"
+      issue: "single const EventSource; no path out of readyState CLOSED"
+    - path: "test/e2e/06-sse-reconnect.spec.ts"
+      issue: "proxy only drops TCP, so it cannot catch the CLOSED path (binding spec — must keep passing)"
+  missing:
+    - "On error with readyState CLOSED: set disconnected and reopen a new EventSource after a delay (~3s); when CONNECTING: set reconnecting and let the browser retry"
+    - "Cleanup clears the retry timer and closes the current EventSource (never more than one live)"
+    - "Regression check for a 502 outage (e.g. local probe) without modifying binding test files"
+  debug_session: .planning/debug/g-01-2-sse-closed-no-reopen.md
