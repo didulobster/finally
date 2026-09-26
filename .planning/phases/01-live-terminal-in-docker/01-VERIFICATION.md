@@ -1,9 +1,10 @@
 ---
 phase: 01-live-terminal-in-docker
 verified: 2026-09-26T02:35:00Z
-status: human_needed
+status: passed
 score: 15/15 must-haves verified
 covered_files:
+
   - .gitignore
   - .planning/REQUIREMENTS.md
   - .planning/phases/01-live-terminal-in-docker/01-01-PLAN.md
@@ -36,6 +37,7 @@ covered_files:
   - frontend/tsconfig.json
   - test/README.md
   - test/sse-502-probe.mjs
+
 covered_digest: "v1:sha256:20cc2c7fcb350fd0d797e35b35dcba982a4a1e32f1dc449b7c1e610c2413183b"
 behavior_unverified: 0
 overrides_applied: 0
@@ -48,11 +50,13 @@ re_verification:
   gaps_remaining: []
   regressions: []
 advisory:
+
   - finding: "The `/.claude/**/lib/` rule in .gitignore (added in 01-04) keeps the installed GSD tooling lib/ directories out of git, so the tracked GSD entry points cannot run from a fresh clone (01-REVIEW.md WR-01)"
     category: other
     reason: "This is tooling-install scope, not the product. Before 01-04, the unanchored `lib/` rule already hid these directories, so the fresh-clone behavior did not change. It is logged in deferred-items.md for a user decision. It does not affect the Docker image or the phase goal."
     evidence_status: "reviewer cited file:line; no phase-goal impact"
 human_verification:
+
   - test: "UAT Test 1 re-test on your own container. Your running `finally` container still uses the old image a8ecec43 (verified: StartedAt 2026-09-26T01:29:59Z, 0 restarts). Run `scripts/start_mac.sh` with no `--build`; the `finally` tag is already HEAD. Then open http://localhost:8000 at about 1600x1000."
     expected: "The full D-01 grid appears. Header on top (FinAlly, Total value, Cash, LIVE dot); Watchlist on the left; Chart over Trade in the center; AI Assistant drawer on the right; Heatmap, P&L, and Positions along the bottom. The theme is dark with no pure black, and the numbers are monospace."
     why_human: "UAT Test 1 failed for the user, and only the user can replace their running container and accept the look. The verifier saw the same layout in a throwaway container from a HEAD build with identical layers to the `finally` tag (screenshot and bounding boxes below)."
