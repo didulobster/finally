@@ -34,7 +34,7 @@ Decimal phases appear between their surrounding integers in numeric order.
   4. The backend has been checked against PLAN.md (market data, SSE, DB init/seed, portfolio, watchlist, chat, health), any gaps that break PLAN.md behavior are fixed, and the existing pytest suite passes
   5. The E2E specs `01-fresh-start` (health and fresh-start tests) and `06-sse-reconnect` pass against the container
 
-**Plans**: 4/6 plans executed (01-04..01-06 are UAT gap closure)
+**Plans**: 5/6 plans executed (01-04..01-06 are UAT gap closure)
 
 Plans:
 **Wave 1**
@@ -55,7 +55,7 @@ Plans:
 
 **Wave 5** *(gap closure: G-01-2; blocked on Wave 4 completion)*
 
-- [ ] 01-05-PLAN.md — Reopen the price stream after the browser closes it on a non-200 reconnect (WR-01), proven by a committed 502 probe (red before, green after) with one live EventSource
+- [x] 01-05-PLAN.md — Reopen the price stream after the browser closes it on a non-200 reconnect (WR-01), proven by a committed 502 probe (red before, green after) with one live EventSource
 
 **Wave 6** *(gap closure: G-01-1, G-01-2; blocked on Wave 5 completion)*
 
@@ -121,7 +121,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Live Terminal in Docker | 4/6 | In Progress|  |
+| 1. Live Terminal in Docker | 5/6 | In Progress|  |
 | 2. Trading & Portfolio | 0/TBD | Not started | - |
 | 3. Watchlist Management & Ticker Chart | 0/TBD | Not started | - |
 | 4. AI Copilot & Definition of Done | 0/TBD | Not started | - |
