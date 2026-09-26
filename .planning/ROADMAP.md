@@ -77,7 +77,7 @@ Plans:
   4. With positions held, the user sees a treemap heatmap sized by weight, with tiles colored green for profit and red for loss, and a canvas P&L line chart of portfolio value from snapshots; with no positions, an empty-positions message is shown
   5. The E2E specs `03-trading` and `04-portfolio-viz` pass against the container
 
-**Plans**: 2/3 plans executed
+**Plans**: 3/3 plans executed
 
 Plans:
 **Wave 1**
@@ -90,7 +90,7 @@ Plans:
 
 **Wave 3** *(blocked on Wave 2 completion)*
 
-- [ ] 02-03-PLAN.md — Rebuild the `finally` tag and pass the probe in a container (tracer), then the compose Docker gate (9 passed), pytest, integrity gates, probe docs and end-of-phase visual checks
+- [x] 02-03-PLAN.md — Rebuild the `finally` tag and pass the probe in a container (tracer), then the compose Docker gate (9 passed), pytest, integrity gates, probe docs and end-of-phase visual checks
 
 **UI hint**: yes
 
@@ -136,6 +136,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Live Terminal in Docker | 6/6 | Complete    | 2026-09-26 |
-| 2. Trading & Portfolio | 2/3 | In Progress|  |
+| 2. Trading & Portfolio | 3/3 | In Progress|  |
 | 3. Watchlist Management & Ticker Chart | 0/TBD | Not started | - |
 | 4. AI Copilot & Definition of Done | 0/TBD | Not started | - |
