@@ -3,16 +3,16 @@ gsd_state_version: "1.0"
 current_phase: 01
 current_phase_name: Live Terminal in Docker
 status: executing
-stopped_at: Completed 01-05-PLAN.md
-last_updated: "2026-09-26T02:18:37.197Z"
+stopped_at: Completed 01-06-PLAN.md
+last_updated: "2026-09-26T02:22:31.006Z"
 last_activity: 2026-09-26
 last_activity_desc: Phase 01 execution started
-state_head: 70153cba78cfcebb34ae2f94c61c2c29e907d477
+state_head: 79ef4e61cd38bf29b0d4b0a968acca9a41dcd084
 progress:
   total_phases: 4
   completed_phases: 0
   total_plans: 6
-  completed_plans: 5
+  completed_plans: 6
   percent: 0
 ---
 
@@ -28,7 +28,7 @@ See: .planning/PROJECT.md (updated 2026-09-25)
 ## Current Position
 
 Phase: 01 (Live Terminal in Docker) — EXECUTING
-Plan: 3 of 6
+Plan: 4 of 6
 Status: Ready to execute
 Last activity: 2026-09-26 — Phase 01 execution started
 
@@ -63,6 +63,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 01 P03 | 3 min | 2 tasks | 4 files |
 | Phase 01 P04 | 3 min | 2 tasks | 35 files |
 | Phase 01 P05 | 3min | 2 tasks | 3 files |
+| Phase 01 P06 | 2min | 2 tasks | 0 files |
 
 ## Accumulated Context
 
@@ -81,6 +82,7 @@ Recent decisions affecting current work:
 - [Phase 01]: 01-04: Phase 1 tree is canonical; frontend/src and vitest removed, config restored byte-for-byte from 9745561^
 - [Phase 01]: 01-04: Installed GSD tooling .claude/**/lib/ kept out of commits via explicit ignore after anchoring lib/ (WR-02); commit-or-not deferred to user
 - [Phase 01]: D-10 amended for the EventSource CLOSED state only (UAT Test 2 'fix it now'): connect() reopens the stream 3 s after readyState CLOSED; CONNECTING still uses native browser retry; one live EventSource at a time
+- [Phase 01]: 01-06: finally image tag rebuilt from HEAD 79ef4e6 (ca44884f); gate touches only throwaway containers; user container compared via docker inspect, not the docker ps Image column
 
 ### Pending Todos
 
@@ -101,6 +103,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-09-26T02:18:31.187Z
-Stopped at: Completed 01-05-PLAN.md
+Last session: 2026-09-26T02:22:30.993Z
+Stopped at: Completed 01-06-PLAN.md
 Resume file: None
