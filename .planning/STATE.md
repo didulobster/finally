@@ -20,7 +20,7 @@ progress:
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-09-25)
+See: .planning/PROJECT.md (updated 2026-09-26)
 
 **Core value:** One `docker run` opens `http://localhost:8000` to a live trading terminal where prices stream, trades fill instantly, and the AI assistant can trade by natural language, proven by the E2E suite passing in Docker.
 **Current focus:** Phase 2 — Trading & Portfolio (not started)

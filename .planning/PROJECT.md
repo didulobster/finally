@@ -12,7 +12,7 @@ One `docker run` opens `http://localhost:8000` to a live, data-dense trading ter
 
 ### Validated
 
-<!-- Inferred from existing backend code (75 pytest tests passing as of 2026-09-25). Still to be verified against PLAN.md during the backend verification phase. -->
+<!-- Backend items were inferred from existing code, then verified against PLAN.md in Phase 1 (01-BACKEND-VERIFICATION.md, 75 pytest passing). -->
 
 - ✓ Market data abstraction with a GBM simulator (correlated moves, random events) and a Massive REST poller, selected by `MASSIVE_API_KEY` — existing
 - ✓ In-memory price cache (price, previous price, timestamp) fed by one background task — existing
@@ -24,23 +24,24 @@ One `docker run` opens `http://localhost:8000` to a live, data-dense trading ter
 - ✓ Portfolio snapshots recorded in the background and after trades — existing
 - ✓ `GET /api/health` — existing
 - ✓ FastAPI static serving of the SPA export — existing
-- ✓ Multi-stage Dockerfile, docker-compose, and start/stop scripts (mac and Windows) — existing (untested: the build needs a frontend)
-- ✓ Playwright E2E suite (6 specs) and `test/docker-compose.test.yml` — existing (cannot pass yet: no frontend)
+- ✓ Multi-stage Dockerfile, docker-compose, and start/stop scripts (mac and Windows) — existing; image builds and serves on :8000 — Phase 1
+- ✓ Playwright E2E suite (6 specs) and `test/docker-compose.test.yml` — existing (01-fresh-start and 06-sse-reconnect pass in Docker — Phase 1)
+- ✓ Backend verified against PLAN.md end to end, no breaking gaps (BACK-01/02) — Phase 1
+- ✓ Next.js + TypeScript static-export frontend in `frontend/`, Tailwind dark theme, same-origin `/api` calls (FND-01/02) — Phase 1
+- ✓ Header with cash balance and connection status dot; stream recovers without reload, including after a non-200 reconnect (HDR-01/03/04) — Phase 1
+- ✓ Watchlist panel with the 10 default tickers, live price and change % (WTCH-01) — Phase 1
+- ✓ Docker image builds; container serves the app on :8000 with a persistent volume (DLVR-01) — Phase 1
 
 ### Active
 
-- [ ] Verify the backend against PLAN.md end to end; fill any gaps and fix real bugs (keep the existing code, no rewrite)
-- [ ] Next.js + TypeScript static-export frontend in `frontend/`, Tailwind dark theme
-- [ ] Watchlist panel: ticker, live price, change %
 - [ ] Main chart for the selected ticker (click in the watchlist to select)
 - [ ] Portfolio heatmap (treemap sized by weight, colored by P&L)
 - [ ] P&L line chart from portfolio snapshots
 - [ ] Positions table (ticker, qty, avg cost, price, unrealized P&L, % change)
 - [ ] Trade bar (ticker, quantity, buy/sell market orders)
 - [ ] AI chat panel (history, loading state, inline trade and watchlist confirmations)
-- [ ] Header with live total value, cash balance, and connection status dot (green/yellow/red)
+- [ ] Header total value updating live on every tick and after trades (HDR-02)
 - [ ] Watchlist add/remove from the UI
-- [ ] Docker image builds; the container serves the app on :8000 with a persistent volume
 - [ ] All 6 existing Playwright E2E specs pass in Docker with `LLM_MOCK=true`
 
 ### Out of Scope
@@ -55,8 +56,8 @@ One `docker run` opens `http://localhost:8000` to a live, data-dense trading ter
 
 ## Context
 
-- Brownfield: the backend (`backend/app/`), Docker setup, scripts, and E2E specs already exist; `frontend/` does not. The codebase map is in `.planning/codebase/`.
-- Because the frontend is missing, the Docker build fails and no E2E spec can run. That is the critical blocker.
+- Brownfield: the backend (`backend/app/`), Docker setup, scripts, and E2E specs already existed. Phase 1 added the `frontend/` shell (app/, components/, store/) with the full D-01 panel grid; unbuilt panels show only an "arrives in Phase N" note. The codebase map is in `.planning/codebase/`.
+- The Docker build works; `scripts/start_mac.sh` reuses an existing `finally` image unless passed `--build`, so rebuild after frontend changes.
 - The E2E specs in `test/e2e/` define `data-testid` hooks and flows and **are the frontend contract**. Change a spec only if it contradicts PLAN.md.
 - Market data design docs: `planning/MARKET_DATA_SUMMARY.md` and `planning/archive/`.
 - LLM calls use the project's `cerebras` skill: LiteLLM → OpenRouter, model `openrouter/openai/gpt-oss-120b`, Cerebras provider, structured outputs.
@@ -75,10 +76,13 @@ One `docker run` opens `http://localhost:8000` to a live, data-dense trading ter
 
 | Decision | Rationale | Outcome |
 |----------|-----------|---------|
-| Keep and verify the existing backend, don't rebuild | Most of PLAN.md is already implemented and tested (75 passing) | — Pending |
+| Keep and verify the existing backend, don't rebuild | Most of PLAN.md is already implemented and tested (75 passing) | ✓ Good — Phase 1 found no breaking gaps; no backend changes needed |
 | Definition of done = Docker build + all 6 E2E specs green | An objective, end-to-end proof of the full spec | — Pending |
-| Existing E2E specs are the frontend contract | They already encode the expected UI hooks and flows | — Pending |
+| Existing E2E specs are the frontend contract | They already encode the expected UI hooks and flows | ✓ Good — binding specs kept unchanged; Phase 1 specs pass |
 | Cloud deploy excluded from v1 | PLAN.md marks it as a stretch goal | — Pending |
+| Phase 1 frontend tree (app/, components/, store/) is canonical; `frontend/src` and vitest removed | A second app tree broke the build (G-01-1) | ✓ Good — build restored (01-04) |
+| Reopen the EventSource 3 s after readyState CLOSED (amends D-10) | Browser stops retrying after a non-200 reconnect (WR-01, UAT "fix it now") | ✓ Good — 502 probe passes, one live stream at a time (01-05) |
+| Zustand single store + one EventSource via `connect()` | Simple shared state for header, watchlist, later panels | — Pending (validate as panels land) |
 
 ## Evolution
 
@@ -98,4 +102,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-09-25 after initialization*
+*Last updated: 2026-09-26 after Phase 1*
