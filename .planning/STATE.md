@@ -3,16 +3,16 @@ gsd_state_version: "1.0"
 current_phase: 02
 current_phase_name: Trading & Portfolio
 status: executing
-stopped_at: Completed 02-01-PLAN.md
-last_updated: "2026-09-26T06:55:59.478Z"
+stopped_at: Completed 02-02-PLAN.md
+last_updated: "2026-09-26T08:08:17.956Z"
 last_activity: 2026-09-26
 last_activity_desc: Phase 02 execution started
-state_head: a2cd77de4783a9ce51468acb9d088732f7cdb8e8
+state_head: 720fe74a1af494558f1d7777992f15f4f4933056
 progress:
   total_phases: 4
   completed_phases: 1
   total_plans: 9
-  completed_plans: 7
+  completed_plans: 8
   percent: 25
 ---
 
@@ -28,7 +28,7 @@ See: .planning/PROJECT.md (updated 2026-09-26)
 ## Current Position
 
 Phase: 02 (Trading & Portfolio) — EXECUTING
-Plan: 2 of 3
+Plan: 3 of 3
 Status: Ready to execute
 Last activity: 2026-09-26 — Phase 02 execution started
 
@@ -65,6 +65,7 @@ Progress: [███░░░░░░░] 25%
 | Phase 01 P05 | 3min | 2 tasks | 3 files |
 | Phase 01 P06 | 2min | 2 tasks | 0 files |
 | Phase 02 P01 | 3min | 2 tasks | 8 files |
+| Phase 02 P02 | 3 min | 3 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -86,6 +87,8 @@ Recent decisions affecting current work:
 - [Phase 01]: 01-06: finally image tag rebuilt from HEAD 79ef4e6 (ca44884f); gate touches only throwaway containers; user container compared via docker inspect, not the docker ps Image column
 - [Phase 02]: 02-01: header total-value is derived via selectTotalValue (cash + qty x livePrice); stored server total removed
 - [Phase 02]: 02-01: Phase 2 commits go on branch gsd/phase-02-trading-portfolio (main is protected)
+- [Phase 02]: 02-02: lightweight-charts 5.2.1, d3-hierarchy 3.1.2, @types/d3-hierarchy 3.1.7 pinned exactly after human approval
+- [Phase 02]: 02-02: P&L chart plots only stored snapshots, deduped to one per second; history replaced wholesale on mount, post-trade and 30 s poll
 
 ### Pending Todos
 
@@ -105,6 +108,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-09-26T06:55:59.463Z
-Stopped at: Completed 02-01-PLAN.md
+Last session: 2026-09-26T08:08:17.941Z
+Stopped at: Completed 02-02-PLAN.md
 Resume file: None
