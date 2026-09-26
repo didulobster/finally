@@ -16,7 +16,16 @@ The DB lives on a tmpfs, so every run starts clean. The HTML report is written t
 
 ## Local
 
-Start the app on port 8000 with `LLM_MOCK=true` and an empty `db/`, then:
+From the repo root, build the frontend and serve it on port 8000 with a fresh DB:
+
+```bash
+npm --prefix frontend run build
+rm -f /tmp/finally-e2e.db
+DB_PATH=/tmp/finally-e2e.db STATIC_DIR="$PWD/frontend/out" LLM_MOCK=true MASSIVE_API_KEY= \
+  uv run --directory backend uvicorn app.main:app --port 8000
+```
+
+Then, in another terminal:
 
 ```bash
 cd test
@@ -25,3 +34,9 @@ npx playwright install chromium
 npx playwright test                 # BASE_URL defaults to http://localhost:8000
 npx playwright show-report
 ```
+
+## 502 recovery probe
+
+With the app running locally (see Local) and `test/node_modules` installed, run `node test/sse-502-probe.mjs http://127.0.0.1:8000` from the repo root.
+It puts a proxy in front of the app that answers the price stream with 502 for a few seconds, then checks
+that the status dot returns to LIVE with prices moving and a single live EventSource. It prints PASS, or FAIL with the stage.

@@ -36,7 +36,13 @@ export const useTerminal = create<TerminalState>()(() => ({
   totalValue: null,
 }));
 
-/** Seed from REST, then keep prices and status live from one EventSource. Returns cleanup. */
+// A non-200 or non-event-stream response closes an EventSource for good; the browser stops retrying.
+const REOPEN_DELAY_MS = 3000;
+
+/**
+ * Seed from REST, then keep prices and status live from one EventSource.
+ * The single stream is reopened after a closing error. Returns cleanup.
+ */
 export function connect(): () => void {
   fetch("/api/watchlist")
     .then((r) => r.json())
@@ -51,10 +57,25 @@ export function connect(): () => void {
     .then((r) => r.json())
     .then((p) => useTerminal.setState({ cash: p.cash_balance, totalValue: p.total_value }));
 
-  const es = new EventSource("/api/stream/prices");
-  es.onopen = () => useTerminal.setState({ status: "connected" });
-  es.onerror = () =>
-    useTerminal.setState({ status: es.readyState === EventSource.CLOSED ? "disconnected" : "reconnecting" });
-  es.onmessage = (e) => useTerminal.setState((s) => ({ prices: { ...s.prices, ...JSON.parse(e.data) } }));
-  return () => es.close();
+  let es: EventSource;
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  const open = () => {
+    const current = new EventSource("/api/stream/prices");
+    es = current;
+    current.onopen = () => useTerminal.setState({ status: "connected" });
+    current.onerror = () => {
+      if (current.readyState === EventSource.CLOSED) {
+        useTerminal.setState({ status: "disconnected" });
+        timer = setTimeout(open, REOPEN_DELAY_MS);
+      } else {
+        useTerminal.setState({ status: "reconnecting" });
+      }
+    };
+    current.onmessage = (e) => useTerminal.setState((s) => ({ prices: { ...s.prices, ...JSON.parse(e.data) } }));
+  };
+  open();
+  return () => {
+    clearTimeout(timer);
+    es.close();
+  };
 }

@@ -13,7 +13,7 @@ The backend, Docker setup, scripts, and E2E suite already exist. The missing pie
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Live Terminal in Docker** - Verified backend plus a Next.js shell served from the container, streaming the default watchlist with cash and connection status
+- [x] **Phase 1: Live Terminal in Docker** - Verified backend plus a Next.js shell served from the container, streaming the default watchlist with cash and connection status (completed 2026-09-26)
 - [ ] **Phase 2: Trading & Portfolio** - Buy/sell from the trade bar and see positions, heatmap, P&L chart, and live total value
 - [ ] **Phase 3: Watchlist Management & Ticker Chart** - Add/remove tickers that persist, and click a ticker to see its live chart
 - [ ] **Phase 4: AI Copilot & Definition of Done** - Chat with the AI to analyze, trade, and manage the watchlist; all 6 E2E specs green in Docker
@@ -34,7 +34,7 @@ Decimal phases appear between their surrounding integers in numeric order.
   4. The backend has been checked against PLAN.md (market data, SSE, DB init/seed, portfolio, watchlist, chat, health), any gaps that break PLAN.md behavior are fixed, and the existing pytest suite passes
   5. The E2E specs `01-fresh-start` (health and fresh-start tests) and `06-sse-reconnect` pass against the container
 
-**Plans**: 3/3 plans executed
+**Plans**: 6/6 plans executed (01-04..01-06 are UAT gap closure)
 
 Plans:
 **Wave 1**
@@ -48,6 +48,18 @@ Plans:
 **Wave 3** *(blocked on Wave 2 completion)*
 
 - [x] 01-03-PLAN.md — Full D-01 terminal grid (panels, collapsible chat drawer, 100vh), then the Docker E2E phase gate for 01-fresh-start + 06-sse-reconnect
+
+**Wave 4** *(gap closure: G-01-1)*
+
+- [x] 01-04-PLAN.md — Restore the canonical Phase 1 frontend build (tsconfig alias, zustand, lockfile from 9745561^), remove frontend/src and vitest, anchor .gitignore Python rules (WR-02), restore local-run docs
+
+**Wave 5** *(gap closure: G-01-2; blocked on Wave 4 completion)*
+
+- [x] 01-05-PLAN.md — Reopen the price stream after the browser closes it on a non-200 reconnect (WR-01), proven by a committed 502 probe (red before, green after) with one live EventSource
+
+**Wave 6** *(gap closure: G-01-1, G-01-2; blocked on Wave 5 completion)*
+
+- [x] 01-06-PLAN.md — Phase gate at HEAD: rebuild the `finally` image tag, prove the grid and 502 recovery in a container, rerun 01-fresh-start + 06-sse-reconnect on the compose path, pytest
 
 **UI hint**: yes
 
@@ -109,7 +121,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Live Terminal in Docker | 3/3 | In Progress|  |
+| 1. Live Terminal in Docker | 6/6 | Complete    | 2026-09-26 |
 | 2. Trading & Portfolio | 0/TBD | Not started | - |
 | 3. Watchlist Management & Ticker Chart | 0/TBD | Not started | - |
 | 4. AI Copilot & Definition of Done | 0/TBD | Not started | - |
