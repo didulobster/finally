@@ -3,16 +3,16 @@ gsd_state_version: "1.0"
 current_phase: 02
 current_phase_name: Trading & Portfolio
 status: executing
-stopped_at: Phase 2 UI-SPEC approved
-last_updated: "2026-09-26T06:45:12.897Z"
+stopped_at: Completed 02-01-PLAN.md
+last_updated: "2026-09-26T06:55:59.478Z"
 last_activity: 2026-09-26
-last_activity_desc: Phase 01 complete, transitioned to Phase 2
-state_head: 30e45a1662519661a3a1a95345b0b4a74aa16298
+last_activity_desc: Phase 02 execution started
+state_head: a2cd77de4783a9ce51468acb9d088732f7cdb8e8
 progress:
   total_phases: 4
   completed_phases: 1
   total_plans: 9
-  completed_plans: 6
+  completed_plans: 7
   percent: 25
 ---
 
@@ -23,14 +23,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-09-26)
 
 **Core value:** One `docker run` opens `http://localhost:8000` to a live trading terminal where prices stream, trades fill instantly, and the AI assistant can trade by natural language, proven by the E2E suite passing in Docker.
-**Current focus:** Phase 2 — Trading & Portfolio (not started)
+**Current focus:** Phase 02 — Trading & Portfolio
 
 ## Current Position
 
-Phase: 02 (Trading & Portfolio) — READY TO EXECUTE
-Plan: Not started
+Phase: 02 (Trading & Portfolio) — EXECUTING
+Plan: 2 of 3
 Status: Ready to execute
-Last activity: 2026-09-26 — Phase 01 complete, transitioned to Phase 2
+Last activity: 2026-09-26 — Phase 02 execution started
 
 Progress: [███░░░░░░░] 25%
 
@@ -64,6 +64,7 @@ Progress: [███░░░░░░░] 25%
 | Phase 01 P04 | 3 min | 2 tasks | 35 files |
 | Phase 01 P05 | 3min | 2 tasks | 3 files |
 | Phase 01 P06 | 2min | 2 tasks | 0 files |
+| Phase 02 P01 | 3min | 2 tasks | 8 files |
 
 ## Accumulated Context
 
@@ -83,6 +84,8 @@ Recent decisions affecting current work:
 - [Phase 01]: 01-04: Installed GSD tooling .claude/**/lib/ kept out of commits via explicit ignore after anchoring lib/ (WR-02); commit-or-not deferred to user
 - [Phase 01]: D-10 amended for the EventSource CLOSED state only (UAT Test 2 'fix it now'): connect() reopens the stream 3 s after readyState CLOSED; CONNECTING still uses native browser retry; one live EventSource at a time
 - [Phase 01]: 01-06: finally image tag rebuilt from HEAD 79ef4e6 (ca44884f); gate touches only throwaway containers; user container compared via docker inspect, not the docker ps Image column
+- [Phase 02]: 02-01: header total-value is derived via selectTotalValue (cash + qty x livePrice); stored server total removed
+- [Phase 02]: 02-01: Phase 2 commits go on branch gsd/phase-02-trading-portfolio (main is protected)
 
 ### Pending Todos
 
@@ -102,6 +105,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-09-26T06:19:19.638Z
-Stopped at: Phase 2 UI-SPEC approved
-Resume file: .planning/phases/02-trading-portfolio/02-UI-SPEC.md
+Last session: 2026-09-26T06:55:59.463Z
+Stopped at: Completed 02-01-PLAN.md
+Resume file: None
