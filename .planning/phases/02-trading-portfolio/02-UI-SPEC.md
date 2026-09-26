@@ -1,7 +1,8 @@
 ---
 phase: "02"
 slug: "trading-portfolio"
-status: draft
+status: approved
+reviewed_at: "2026-09-26"
 shadcn_initialized: false
 preset: none
 created: "2026-09-26"
@@ -24,7 +25,7 @@ Sources: `02-CONTEXT.md` (D-01..D-11 locked, heatmap/layout/empty states at Clau
 | Component library | none. Reuse the Phase 1 `Panel` / `PanelNote` (`frontend/components/Panel.tsx`) |
 | Icon library | none. Glyph text only, following the Phase 1 `«` `»` pattern. This phase needs no icons. |
 | Font | Tailwind default `font-sans` (system UI stack) for labels and copy. Use `font-mono` plus `tabular-nums` for every number, ticker and input value (Phase 1 pattern). |
-| Styling | Tailwind CSS 4 utilities on the `@theme` tokens in `frontend/app/globals.css`. Use `bg-bg`, `bg-panel`, `border-border`, `text-text`, `text-muted`, `text-accent`, `bg-primary`/`border-primary`, `bg-submit`, `text-up`/`bg-up`, `text-down`/`bg-down`. |
+| Styling | Tailwind CSS 4 utilities on the `@theme` tokens in `frontend/app/globals.css`. Use `bg-bg`, `bg-panel`, `border-border`, `text-text`, `text-muted`, `text-accent`, `bg-primary`/`border-primary`, `text-up`/`bg-up`, `text-down`/`bg-down`. |
 | Visualization libs (new) | `lightweight-charts@5.2.1` for the P&L area chart on canvas (D-11). `d3-hierarchy@3.1.2` with `@types/d3-hierarchy@3.1.7` (dev) handles the squarified treemap layout math only; it renders no DOM of its own. Both were vetted in 02-RESEARCH "Package Legitimacy Audit". |
 
 Component Inventory is omitted because `Tool: none`. There is no design-system package to enumerate.
@@ -78,7 +79,7 @@ All values are existing `@theme` tokens in `frontend/app/globals.css`.
 | Dominant (60%) | `#0d1117` (`bg-bg`) | Page background, the gaps between panels, trade input fields, heatmap tile separators (`border-bg`) |
 | Secondary (30%) | `#1a1a2e` (`bg-panel`) | Header, every Panel surface (Trade, Heatmap, P&L, Positions), the sticky table header row |
 | Accent (10%) | `#ecad0a` (`text-accent` / `bg-accent`) | Reserved elements only (list below) |
-| Submit | `#753991` (`bg-submit`) | Buy and Sell buttons only in this phase (PLAN.md: purple for submit buttons) |
+| Buy / Sell buttons | `#3fb950` (`bg-up`) / `#f85149` (`bg-down`), label `text-bg` | Buy is green and Sell is red (user decision 2026-09-26, the terminal convention). This overrides PLAN.md's purple-submit rule for these two buttons only; `bg-submit` purple stays reserved for later submit buttons (e.g. chat send). Dark `text-bg` labels give about 8.7:1 contrast on green and 5.9:1 on red. |
 | Primary / focus | `#209dd7` (`border-primary`, `outline-primary`) | Focus ring on trade inputs and the Buy/Sell buttons (`focus-visible`) |
 | Up / profit / success | `#3fb950` = `rgb(63, 185, 80)` | Positive P&L and % text, successful `trade-result`, "up" heatmap tiles, the P&L area when latest ≥ first snapshot |
 | Destructive / loss / error | `#f85149` = `rgb(248, 81, 73)` | Negative P&L and % text, rejected `trade-result`, "down" heatmap tiles, the P&L area when latest < first snapshot. No destructive actions exist in this phase. |
@@ -91,7 +92,7 @@ Accent (`#ecad0a`) is reserved for:
 2. The "reconnecting" connection-status dot (existing)
 3. Hover on the chat drawer collapse/expand toggle (existing)
 
-Accent is **not** used by any Phase 2 element. Buttons use submit purple, focus uses primary blue, and data uses up/down.
+Accent is **not** used by any Phase 2 element. Buy/Sell use up green / down red, focus uses primary blue, and data uses up/down.
 
 Heatmap and chart color rule (binding, from 02-RESEARCH Pitfall 1): set tile backgrounds with **inline `rgb()`/`rgba()` strings**, never Tailwind opacity modifiers (`bg-up/60`) or Tailwind palette classes (`bg-green-600`). Chromium serializes those as `oklab()`/`oklch()`, which breaks the spec 04 channel parser.
 - up: `rgba(63, 185, 80, a)`, down: `rgba(248, 81, 73, a)`, flat: `rgb(48, 54, 61)`
@@ -111,7 +112,7 @@ The Phase 1 grid in `frontend/app/page.tsx` is unchanged. This phase only replac
 - `trade-ticker`: `<input type="text">`, `aria-label="Ticker"`, placeholder `Ticker`, `h-8 w-24 border border-border bg-bg px-2 font-mono text-sm uppercase`. CSS `uppercase` is for display only; the raw value is sent and the backend normalizes it.
 - `trade-quantity`: `<input type="number" step="any" min="0">`, `aria-label="Quantity"`, placeholder `Qty`, same style as the ticker input.
 - Inputs on focus: `focus:border-primary focus:outline-none`. Placeholder `placeholder:text-muted`.
-- `trade-buy` / `trade-sell`: `<button type="button">`, labels `Buy` / `Sell`, `h-8 w-16 bg-submit text-sm font-semibold text-text hover:brightness-125 active:brightness-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary`. The buttons are identical in style and told apart by label only.
+- `trade-buy` / `trade-sell`: `<button type="button">`, labels `Buy` / `Sell`, `h-8 w-16 text-sm font-semibold text-bg hover:brightness-110 active:brightness-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary`, with `bg-up` on Buy and `bg-down` on Sell. Both have `aria-label` `Buy shares` / `Sell shares`, and the visible labels stay `Buy` / `Sell`.
 - Both buttons stay enabled at all times, including while a request is in flight (D-04). There is no `<form>` element, so Enter does not submit (this avoids an ambiguous Buy/Sell on Enter).
 - After a success both inputs keep their values (D-01).
 - `trade-result`: `<p role="status" aria-live="polite">`, `truncate text-xs font-mono`, with `title={text}` so the full text shows on hover. It is always rendered, and three states follow in the copy table: idle (muted), success (`text-up`), rejected (`text-down`). It persists until the next trade and has no fade timer (D-02).
@@ -184,7 +185,9 @@ The Phase 1 grid in `frontend/app/page.tsx` is unchanged. This phase only replac
 
 ## UI Considerations
 
-Applicable state considerations resolved: 17 covered, 2 backstop, 0 unresolved
+Applicable state considerations resolved: 18 covered, 2 backstop, 0 unresolved
+
+Probe run 2026-09-26 (ui-consideration-probe, 19 applicable). Element kinds were confirmed with the user: the Trade bar is a form, Positions a list, the Heatmap a collection plus media, the P&L chart a chart/media, and the Header total a live value. The probe had left the chart and the header unclassified.
 
 | Category | Element(s) | Status | Resolution / Reason |
 |----------|------------|--------|---------------------|
@@ -206,6 +209,7 @@ Applicable state considerations resolved: 17 covered, 2 backstop, 0 unresolved
 | zero-one-many | Positions table, Heatmap | ✅ covered | 0 shows the empty copy, 1 is a single row and a single tile filling the heatmap, many gives alphabetical rows and a squarified mosaic. No pluralized copy is needed |
 | long-text | `trade-result` (long backend error, e.g. insufficient cash with large numbers) | ✅ covered | Single line with `truncate` plus `title` for the full text. The E2E `toContainText` reads textContent, so truncation does not affect it |
 | long-text | Heatmap tile P&L % width in narrow tiles | 🧪 backstop | Visual check at 1600×1000 with 3–6 positions: ticker and % are legible in tiles holding ≥10% weight |
+| loading | Header total value | ✅ covered | While `cash === null`, `selectTotalValue` returns `null` and `total-value` is not rendered, the same as Phase 1. Once loaded it always equals cash + Σ qty × live price (fallback `current_price`) |
 | populated | P&L chart sizing inside the 32%-height bottom row | 🧪 backstop | Visual check at 1600×1000: the canvas fills the panel body with no scrollbar feedback loop (02-RESEARCH A5) |
 
 ---
@@ -217,7 +221,7 @@ Applicable state considerations resolved: 17 covered, 2 backstop, 0 unresolved
 | Click Buy / Sell | POST `/api/portfolio/trade` with the raw ticker, `Number(qty)` and the side. On success, update the store from the response `portfolio`, show the green result and refetch history. On failure, show the red result and leave the store unchanged |
 | Price tick (~500 ms) | Header total, positions Price/P&L/% and heatmap tiles recompute from `prices`. Rows never reorder. The P&L chart does not change |
 | Keyboard | Tab order: ticker → quantity → Buy → Sell. The focus-visible ring is `primary` blue. Enter does not submit |
-| Hover | Buy/Sell brighten (`brightness-125`). Heatmap tiles and a truncated `trade-result` show a native `title` tooltip. Table rows have no hover effect |
+| Hover | Buy/Sell brighten (`brightness-110`). Heatmap tiles and a truncated `trade-result` show a native `title` tooltip. Table rows have no hover effect |
 | Motion | None added in this phase (price flash is v2) |
 
 ---
@@ -234,12 +238,12 @@ The npm packages added this phase (`lightweight-charts`, `d3-hierarchy`, `@types
 
 ## Checker Sign-Off
 
-- [ ] Dimension 1 Copywriting: PASS
-- [ ] Dimension 2 Visuals: PASS
-- [ ] Dimension 3 Color: PASS
-- [ ] Dimension 4 Typography: PASS
-- [ ] Dimension 5 Spacing: PASS
-- [ ] Dimension 6 Registry Safety: PASS
-- [ ] Dimension 7 Inventory Provenance: PASS
+- [x] Dimension 1 Copywriting: FLAG (non-blocking)
+- [x] Dimension 2 Visuals: FLAG (non-blocking)
+- [x] Dimension 3 Color: PASS
+- [x] Dimension 4 Typography: FLAG (non-blocking)
+- [x] Dimension 5 Spacing: FLAG (non-blocking)
+- [x] Dimension 6 Registry Safety: PASS
+- [x] Dimension 7 Inventory Provenance: PASS
 
-**Approval:** pending
+**Approval:** approved 2026-09-26 (gsd-ui-checker; 4 non-blocking FLAGs: CTA labels with no noun, now given aria-labels; no declared focal point; 11px vs 12px sizes; the 12px `md` spacing step is inherited from Phase 1)
