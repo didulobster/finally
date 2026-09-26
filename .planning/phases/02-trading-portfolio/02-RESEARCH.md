@@ -433,14 +433,16 @@ Option names were verified in `lightweight-charts` 5.2.1 `dist/typings.d.ts`: `c
 | A5 | LWC autoSize inside `absolute inset-0` in the Panel body sizes correctly with no scroll feedback loop | Pattern 4 / Pitfall 6 | Medium. Verify with the E2E `canvas` visibility and a screenshot |
 | A6 | P&L panel always shows the chart when history exists (history is never empty on a running server), with a muted note only while `history` is empty | Empty states | Low. A discretion area in CONTEXT |
 
-## Open Questions
+## Open Questions (RESOLVED)
 
-1. **Should `connect()` re-seed the portfolio when the stream reopens?** (Phase 1 review IN-05)
+1. **Should `connect()` re-seed the portfolio when the stream reopens?** (Phase 1 review IN-05) — RESOLVED: no re-seed.
    - What we know: cash can go stale only if the backend restarts with a new DB while the page is open.
    - Recommendation: out of scope. No spec covers it, and D-05 forbids periodic refetch.
-2. **Should the TradeBar uppercase the ticker input as the user types?**
+   - Resolution: 02-01 Task 1 keeps `/api/portfolio` as a one-time seed in `connect()` via `applyPortfolio`; the stream reopening does not refetch (02-01 must_haves: "/api/portfolio is fetched once on load only").
+2. **Should the TradeBar uppercase the ticker input as the user types?** — RESOLVED: display-only uppercase.
    - What we know: the backend normalizes the ticker, and the success text uses `trade.ticker` (already uppercase).
    - Recommendation: add a CSS `uppercase` class for display only and send the raw value.
+   - Resolution: 02-01 Task 1 gives `trade-ticker` the `uppercase` class ("display only"); the raw value is sent and the backend's `normalize_ticker` uppercases it.
 
 ## Environment Availability
 
