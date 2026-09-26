@@ -1,22 +1,25 @@
 ---
-status: diagnosed
+status: testing
 phase: 01-live-terminal-in-docker
 source: [01-VERIFICATION.md]
 started: 2026-09-25T04:45:00Z
-updated: 2026-09-26T01:55:37Z
+updated: 2026-09-26T02:32:44Z
 ---
 
 ## Current Test
 
-[testing paused — 1 items outstanding]
+number: 1
+name: Visual check of the terminal at 1600x1000
+expected: |
+  Run scripts/start_mac.sh (no --build needed; the finally tag was rebuilt in 01-06). At 1600x1000: header (FinAlly, Total value, Cash, LIVE dot) on top; Watchlist left; Chart over Trade center; AI Assistant drawer right; Heatmap, P&L, Positions along the bottom. Dark theme, no pure black, monospace numbers, green/yellow/red dot.
+awaiting: user response
 
 ## Tests
 
 ### 1. Visual check of the terminal at 1600x1000
 expected: A dense dark terminal with the D-01 layout (header top; watchlist left; chart over trade in the center; AI drawer right; heatmap, P&L, and positions along the bottom); no pure black; monospace numbers; dot colors green/yellow/red.
-result: issue
-reported: "only watchlist on the left is showing and the header with status dot."
-severity: major
+result: [pending]
+note: "Re-test after gap closure 01-04..01-06. Run scripts/start_mac.sh (no --build needed; finally tag rebuilt in 01-06). Previous result: issue — only watchlist and header showed (G-01-1)."
 
 ### 2. Decide on code-review WR-01 (SSE never reopens after a non-200 reconnect)
 expected: Either accept it for Phase 1 (local container never returns non-200; a real network drop or server kill recovers), or schedule the 01-REVIEW.md WR-01 fix (reopen the EventSource after CLOSED).
@@ -30,7 +33,7 @@ result: pass
 
 ### 4. Resolve the judgment-tier prohibitions
 expected: Confirm that 01-01 has no PASS row unless it was exercised live or cited file:line, and that 01-03 placeholder panels show no invented data. Verifier's verdict (non-authoritative): both hold.
-result: skipped
+result: [pending]
 
 ### 5. MVP-mode goal format
 expected: Accept the current goal wording, or run `/gsd-mvp-phase 1` to set a user-story goal.
@@ -40,9 +43,9 @@ result: pass
 
 total: 5
 passed: 2
-issues: 2
-pending: 0
-skipped: 1
+issues: 1
+pending: 2
+skipped: 0
 blocked: 0
 
 ## Gaps
