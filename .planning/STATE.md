@@ -2,17 +2,17 @@
 gsd_state_version: "1.0"
 current_phase: 02
 current_phase_name: Trading & Portfolio
-status: verifying
-stopped_at: Completed 02-03-PLAN.md
-last_updated: "2026-09-26T08:12:08.748Z"
-last_activity: 2026-09-26
+status: executing
+stopped_at: Completed 02-04-PLAN.md
+last_updated: "2026-09-26T23:52:48.782Z"
+last_activity: 2026-09-27
 last_activity_desc: Phase 02 execution started
-state_head: 471d860bd136a1fdb70b2a25ec8028c75227b087
+state_head: 100d2dcb9028854ae91f76357ca64d2ffc4227fd
 progress:
   total_phases: 4
   completed_phases: 1
-  total_plans: 9
-  completed_plans: 9
+  total_plans: 12
+  completed_plans: 10
   percent: 25
 ---
 
@@ -28,9 +28,9 @@ See: .planning/PROJECT.md (updated 2026-09-26)
 ## Current Position
 
 Phase: 02 (Trading & Portfolio) — EXECUTING
-Plan: 3 of 3
-Status: Phase complete — ready for verification
-Last activity: 2026-09-26 — Phase 02 execution started
+Plan: 5 of 6
+Status: Ready to execute
+Last activity: 2026-09-27 — Phase 02 execution started
 
 Progress: [███░░░░░░░] 25%
 
@@ -67,6 +67,7 @@ Progress: [███░░░░░░░] 25%
 | Phase 02 P01 | 3min | 2 tasks | 8 files |
 | Phase 02 P02 | 3 min | 3 tasks | 6 files |
 | Phase 02 P03 | 2min | 2 tasks | 1 files |
+| Phase 02 P04 | 5min | 2 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -91,6 +92,9 @@ Recent decisions affecting current work:
 - [Phase 02]: 02-02: lightweight-charts 5.2.1, d3-hierarchy 3.1.2, @types/d3-hierarchy 3.1.7 pinned exactly after human approval
 - [Phase 02]: 02-02: P&L chart plots only stored snapshots, deduped to one per second; history replaced wholesale on mount, post-trade and 30 s poll
 - [Phase 02]: 02-03: Phase 2 container gate green on the compose path (01+03+04+06 = 9 passed), pytest 75 passed; finally tag rebuilt at HEAD aa8cf44
+- [Phase 02]: 02-04: successful sell trade-result uses text-text (neutral); buy stays text-up, rejections text-down (user decision 2026-09-26 amends D-02, G-02-3)
+- [Phase 02]: 02-04: Trade panel has no fixed md height, TradeBar is min-h-16; a wrapped bar grows the panel (G-02-1)
+- [Phase 02]: 02-04: a sandboxed next build poisons .next/cache/turbopack with a cached EPERM; run next build with the sandbox off
 
 ### Pending Todos
 
@@ -110,6 +114,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-09-26T08:12:08.732Z
-Stopped at: Completed 02-03-PLAN.md
+Last session: 2026-09-26T23:52:48.766Z
+Stopped at: Completed 02-04-PLAN.md
 Resume file: None

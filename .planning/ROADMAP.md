@@ -77,7 +77,7 @@ Plans:
   4. With positions held, the user sees a treemap heatmap sized by weight, with tiles colored green for profit and red for loss, and a canvas P&L line chart of portfolio value from snapshots; with no positions, an empty-positions message is shown
   5. The E2E specs `03-trading` and `04-portfolio-viz` pass against the container
 
-**Plans**: 3/6 plans executed (02-04..02-06 are UAT gap closure)
+**Plans**: 4/6 plans executed (02-04..02-06 are UAT gap closure)
 
 Plans:
 **Wave 1**
@@ -94,7 +94,7 @@ Plans:
 
 **Wave 4** *(gap closure: G-02-3, G-02-1)*
 
-- [ ] 02-04-PLAN.md — Sell fill line in neutral text (buy green, rejection red) via a side on TradeResult (tracer), then a content-sized Trade panel so Buy/Sell stay visible at 768-850 px with chat open; both test-first with added 03-trading assertions; UI-SPEC and D-02 amended (TRAD-01, TRAD-02)
+- [x] 02-04-PLAN.md — Sell fill line in neutral text (buy green, rejection red) via a side on TradeResult (tracer), then a content-sized Trade panel so Buy/Sell stay visible at 768-850 px with chat open; both test-first with added 03-trading assertions; UI-SPEC and D-02 amended (TRAD-01, TRAD-02)
 
 **Wave 5** *(gap closure: G-02-5; blocked on Wave 4 completion)*
 
@@ -148,6 +148,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Live Terminal in Docker | 6/6 | Complete    | 2026-09-26 |
-| 2. Trading & Portfolio | 3/6 | In Progress|  |
+| 2. Trading & Portfolio | 4/6 | In Progress|  |
 | 3. Watchlist Management & Ticker Chart | 0/TBD | Not started | - |
 | 4. AI Copilot & Definition of Done | 0/TBD | Not started | - |
