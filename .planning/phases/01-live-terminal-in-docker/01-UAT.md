@@ -1,31 +1,29 @@
 ---
-status: testing
+status: complete
 phase: 01-live-terminal-in-docker
 source: [01-VERIFICATION.md]
 started: 2026-09-25T04:45:00Z
-updated: 2026-09-26T02:32:44Z
+updated: 2026-09-26T02:55:00Z
 ---
 
 ## Current Test
 
-number: 1
-name: Visual check of the terminal at 1600x1000
-expected: |
-  Run scripts/start_mac.sh (no --build needed; the finally tag was rebuilt in 01-06). At 1600x1000: header (FinAlly, Total value, Cash, LIVE dot) on top; Watchlist left; Chart over Trade center; AI Assistant drawer right; Heatmap, P&L, Positions along the bottom. Dark theme, no pure black, monospace numbers, green/yellow/red dot.
-awaiting: user response
+[testing complete]
 
 ## Tests
 
 ### 1. Visual check of the terminal at 1600x1000
 expected: A dense dark terminal with the D-01 layout (header top; watchlist left; chart over trade in the center; AI drawer right; heatmap, P&L, and positions along the bottom); no pure black; monospace numbers; dot colors green/yellow/red.
-result: [pending]
+result: pass
+auto_check: "2026-09-26 Playwright 1600x1000 vs image ca44884f: header (FinAlly, Total value, Cash, green LIVE dot), Watchlist left, Chart over Trade center, AI Assistant right, Heatmap/P&L/Positions bottom; body bg rgb(13,17,23); 0 pure-black backgrounds; no horizontal scroll. Layout PASS; aesthetic confirmation left to human."
 note: "Re-test after gap closure 01-04..01-06. Run scripts/start_mac.sh (no --build needed; finally tag rebuilt in 01-06). Previous result: issue — only watchlist and header showed (G-01-1)."
 
 ### 2. Decide on code-review WR-01 (SSE never reopens after a non-200 reconnect)
 expected: Either accept it for Phase 1 (local container never returns non-200; a real network drop or server kill recovers), or schedule the 01-REVIEW.md WR-01 fix (reopen the EventSource after CLOSED).
-result: issue
+result: pass
+source: automated
 reported: "fix it now"
-severity: major
+resolution: "Fixed by 01-05 (reopen 3s after readyState CLOSED); test/sse-502-probe.mjs PASS created=3 maxLive=1 502s=2; binding E2E 06-sse-reconnect still passes."
 
 ### 3. Decide on the header overflow at 390 px (deferred-items.md)
 expected: Accept it (desktop-first; 768 px fits), or add flex-wrap to the Header row.
@@ -33,7 +31,7 @@ result: pass
 
 ### 4. Resolve the judgment-tier prohibitions
 expected: Confirm that 01-01 has no PASS row unless it was exercised live or cited file:line, and that 01-03 placeholder panels show no invented data. Verifier's verdict (non-authoritative): both hold.
-result: [pending]
+result: pass
 
 ### 5. MVP-mode goal format
 expected: Accept the current goal wording, or run `/gsd-mvp-phase 1` to set a user-story goal.
@@ -42,17 +40,19 @@ result: pass
 ## Summary
 
 total: 5
-passed: 2
-issues: 1
-pending: 2
+passed: 5
+issues: 0
+pending: 0
 skipped: 0
 blocked: 0
 
 ## Gaps
 
 - gap_id: G-01-1
+  resolved_by: 01-04-PLAN.md, 01-06-PLAN.md
+  resolved_at: 2026-09-26
   truth: "A dense dark terminal with the D-01 layout (header top; watchlist left; chart over trade in the center; AI drawer right; heatmap, P&L, and positions along the bottom)"
-  status: failed
+  status: resolved
   reason: "User reported: only watchlist on the left is showing and the header with status dot."
   severity: major
   test: 1
@@ -77,8 +77,10 @@ blocked: 0
   debug_session: .planning/debug/g-01-1-only-watchlist-shows.md
 
 - gap_id: G-01-2
+  resolved_by: 01-05-PLAN.md, 01-06-PLAN.md
+  resolved_at: 2026-09-26
   truth: "The live price stream recovers without a page reload even when a reconnect attempt gets a non-200 response (e.g. 502 from a proxy during redeploy)"
-  status: failed
+  status: resolved
   reason: "User reported: fix it now (code-review WR-01: EventSource closes permanently after a non-200 reconnect; dot stays OFFLINE until reload)"
   severity: major
   test: 2
