@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { ChatDrawer } from "@/components/ChatDrawer";
 import { Header } from "@/components/Header";
+import { Heatmap } from "@/components/Heatmap";
 import { Panel, PanelNote } from "@/components/Panel";
 import { PnlChart } from "@/components/PnlChart";
 import { Positions } from "@/components/Positions";
@@ -36,7 +37,7 @@ export default function Page() {
       </div>
       <div className="grid grid-cols-1 gap-1 px-1 pb-1 md:h-[32%] md:shrink-0 md:grid-cols-[1fr_1fr_1.3fr]">
         <Panel title="Heatmap" className={STACKED}>
-          <PanelNote>The portfolio heatmap arrives in Phase 2.</PanelNote>
+          <Heatmap />
         </Panel>
         <Panel title="P&L" className={STACKED}>
           <PnlChart />
