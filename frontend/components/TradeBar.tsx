@@ -25,7 +25,7 @@ export function TradeBar() {
 
   const text = result?.text ?? "Market order · fills instantly at the live price";
   return (
-    <div className="flex h-full flex-wrap items-center gap-2 px-3">
+    <div className="flex min-h-16 flex-wrap items-center gap-2 px-3">
       <input
         data-testid="trade-ticker"
         type="text"

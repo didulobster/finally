@@ -29,7 +29,7 @@ export default function Page() {
           <Panel title="Chart" className={`${STACKED} md:flex-1`}>
             <PanelNote>The price chart for the selected ticker arrives in Phase 3.</PanelNote>
           </Panel>
-          <Panel title="Trade" className={`${STACKED} md:h-24 md:shrink-0`}>
+          <Panel title="Trade" className={`${STACKED} md:shrink-0`}>
             <TradeBar />
           </Panel>
         </div>

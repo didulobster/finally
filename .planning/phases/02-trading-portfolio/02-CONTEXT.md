@@ -38,7 +38,7 @@ Not in this phase: watchlist add/remove, ticker selection, main ticker chart (Ph
 
 ### Claude's Discretion
 - **Heatmap:** whether to hand-roll the treemap (a simple squarified or slice-and-dice layout on divs) or use a small library, the tile content (ticker plus P&L %), and the color scale. Hard constraints come from spec 04: `heatmap` container and `heatmap-cell-{TICKER}` tiles with area > 0, `data-pnl` = `up`/`down`/`flat`, and a computed background with green > red for up and red > green for down. Size is by market value weight, and tiles update live with prices (D-05).
-- Trade bar layout inside the existing `md:h-24` Trade panel, and the input validation UX (the backend returns 400/422 with the text; show it).
+- Trade bar layout inside the Trade panel (content-sized since UAT G-02-1), and the input validation UX (the backend returns 400/422 with the text; show it).
 - Empty states: `positions-empty` (PORT-02) plus matching muted notes in the heatmap and P&L panels.
 - Number formatting follows Phase 1 (`store/format.ts`), and quantities render so `/\b5(\.0+)?\b/` matches.
 

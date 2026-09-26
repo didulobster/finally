@@ -52,3 +52,10 @@ test("rejected trades show an error and leave cash unchanged", async ({ page }) 
   expect(await readNumber(cash)).toBe(before);
   await expect(page.getByTestId("position-row-JPM")).toHaveCount(0);
 });
+
+test("Buy and Sell stay visible at a narrow desktop width", async ({ page }) => {
+  await page.setViewportSize({ width: 768, height: 600 });
+  await openApp(page);
+  await expect(page.getByTestId("trade-buy")).toBeInViewport({ ratio: 1 });
+  await expect(page.getByTestId("trade-sell")).toBeInViewport({ ratio: 1 });
+});

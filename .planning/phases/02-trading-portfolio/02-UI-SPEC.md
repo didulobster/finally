@@ -103,11 +103,11 @@ Heatmap and chart color rule (binding, from 02-RESEARCH Pitfall 1): set tile bac
 
 ## Layout & Component Contracts
 
-The Phase 1 grid in `frontend/app/page.tsx` is unchanged. This phase only replaces four `PanelNote` bodies, and the panel titles stay `Trade`, `Heatmap`, `P&L` and `Positions`. The E2E viewport is 1600×1000, i.e. the desktop grid.
+The Phase 1 grid in `frontend/app/page.tsx` is unchanged, except that the Trade panel has no fixed height at md and up and sizes to the trade bar (UAT G-02-1). This phase only replaces four `PanelNote` bodies, and the panel titles stay `Trade`, `Heatmap`, `P&L` and `Positions`. The E2E viewport is 1600×1000, i.e. the desktop grid.
 
-### Trade bar (`components/TradeBar.tsx`, inside the `md:h-24` Trade panel, about 68px body)
+### Trade bar (`components/TradeBar.tsx`, inside the Trade panel, which sizes to the bar: a 64px body on one row, taller when the bar wraps)
 
-- Body: `flex h-full flex-wrap items-center gap-2 px-3`. Everything sits on one row at `md` and up and wraps below `md`.
+- Body: `flex min-h-16 flex-wrap items-center gap-2 px-3`. It sits on one row when the middle column is wide enough (about 900px and up with the chat drawer open) and wraps otherwise; the panel grows with the rows, so Buy and Sell are never clipped (UAT G-02-1).
 - Order, left to right: ticker input, quantity input, Buy, Sell, then `trade-result` (`ml-2 min-w-0 flex-1`, which with the gap-2 gives the 16px separation).
 - `trade-ticker`: `<input type="text">`, `aria-label="Ticker"`, placeholder `Ticker`, `h-8 w-24 border border-border bg-bg px-2 font-mono text-sm uppercase`. CSS `uppercase` is for display only; the raw value is sent and the backend normalizes it.
 - `trade-quantity`: `<input type="number" step="any" min="0">`, `aria-label="Quantity"`, placeholder `Qty`, same style as the ticker input.
