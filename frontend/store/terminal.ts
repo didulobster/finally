@@ -25,13 +25,17 @@ type Portfolio = { cash_balance: number; positions: Position[] };
 /** Outcome of a trade, shown by the trade bar. */
 export type TradeResult = { ok: boolean; text: string };
 
-/** The whole client state: connection, live prices, watchlist order, cash, and positions. */
+/** One stored portfolio value from /api/portfolio/history. */
+export type Snapshot = { total_value: number; recorded_at: string };
+
+/** The whole client state: connection, live prices, watchlist order, cash, positions, and value history. */
 export type TerminalState = {
   status: Status;
   prices: Record<string, Price>;
   watchlist: string[];
   cash: number | null;
   positions: Position[];
+  history: Snapshot[];
 };
 
 type WatchlistItem = Price | { ticker: string; price: null };
@@ -43,11 +47,19 @@ export const useTerminal = create<TerminalState>()(() => ({
   watchlist: [],
   cash: null,
   positions: [],
+  history: [],
 }));
 
 /** Write a server portfolio (GET /api/portfolio or a trade response) into the store. */
 export function applyPortfolio(p: Portfolio): void {
   useTerminal.setState({ cash: p.cash_balance, positions: p.positions });
+}
+
+/** Replace the stored portfolio value history with the server's full ordered list. */
+export function loadHistory(): void {
+  fetch("/api/portfolio/history")
+    .then((r) => r.json())
+    .then((history: Snapshot[]) => useTerminal.setState({ history }));
 }
 
 /** Place a market order; the store changes only when the server fills it. */
@@ -65,6 +77,7 @@ export async function placeTrade(ticker: string, quantity: number, side: "buy" |
   const body = await r.json();
   if (!r.ok) return { ok: false, text: typeof body.detail === "string" ? body.detail : body.detail[0].msg };
   applyPortfolio(body.portfolio);
+  loadHistory();
   const t = body.trade;
   const verb = t.side === "buy" ? "Bought" : "Sold";
   return { ok: true, text: `${verb} ${formatQty(t.quantity)} ${t.ticker} @ ${formatPrice(t.price)}` };

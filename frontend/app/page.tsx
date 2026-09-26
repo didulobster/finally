@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { ChatDrawer } from "@/components/ChatDrawer";
 import { Header } from "@/components/Header";
 import { Panel, PanelNote } from "@/components/Panel";
+import { PnlChart } from "@/components/PnlChart";
 import { Positions } from "@/components/Positions";
 import { TradeBar } from "@/components/TradeBar";
 import { Watchlist } from "@/components/Watchlist";
@@ -38,7 +39,7 @@ export default function Page() {
           <PanelNote>The portfolio heatmap arrives in Phase 2.</PanelNote>
         </Panel>
         <Panel title="P&L" className={STACKED}>
-          <PanelNote>The portfolio value chart arrives in Phase 2.</PanelNote>
+          <PnlChart />
         </Panel>
         <Panel title="Positions" className={STACKED}>
           <Positions />
