@@ -4,6 +4,8 @@ import { useEffect } from "react";
 import { ChatDrawer } from "@/components/ChatDrawer";
 import { Header } from "@/components/Header";
 import { Panel, PanelNote } from "@/components/Panel";
+import { Positions } from "@/components/Positions";
+import { TradeBar } from "@/components/TradeBar";
 import { Watchlist } from "@/components/Watchlist";
 import { connect } from "@/store/terminal";
 
@@ -26,7 +28,7 @@ export default function Page() {
             <PanelNote>The price chart for the selected ticker arrives in Phase 3.</PanelNote>
           </Panel>
           <Panel title="Trade" className={`${STACKED} md:h-24 md:shrink-0`}>
-            <PanelNote>The trade bar arrives in Phase 2.</PanelNote>
+            <TradeBar />
           </Panel>
         </div>
         <ChatDrawer />
@@ -39,7 +41,7 @@ export default function Page() {
           <PanelNote>The portfolio value chart arrives in Phase 2.</PanelNote>
         </Panel>
         <Panel title="Positions" className={STACKED}>
-          <PanelNote>The positions table arrives in Phase 2.</PanelNote>
+          <Positions />
         </Panel>
       </div>
     </main>

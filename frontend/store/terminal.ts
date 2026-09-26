@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { formatPrice, formatQty } from "./format";
 
 /** Price stream connection state shown by the header status dot. */
 export type Status = "connected" | "reconnecting" | "disconnected";
@@ -16,12 +17,21 @@ export type Price = {
   session_change_percent: number;
 };
 
-/** The whole client state: connection, live prices, watchlist order, and cash. */
+/** A held position as returned by /api/portfolio. */
+export type Position = { ticker: string; quantity: number; avg_cost: number; current_price: number };
+
+type Portfolio = { cash_balance: number; positions: Position[]; total_value: number };
+
+/** Outcome of a trade, shown by the trade bar. */
+export type TradeResult = { ok: boolean; text: string };
+
+/** The whole client state: connection, live prices, watchlist order, cash, and positions. */
 export type TerminalState = {
   status: Status;
   prices: Record<string, Price>;
   watchlist: string[];
   cash: number | null;
+  positions: Position[];
   totalValue: number | null;
 };
 
@@ -33,8 +43,34 @@ export const useTerminal = create<TerminalState>()(() => ({
   prices: {},
   watchlist: [],
   cash: null,
+  positions: [],
   totalValue: null,
 }));
+
+/** Write a server portfolio (GET /api/portfolio or a trade response) into the store. */
+export function applyPortfolio(p: Portfolio): void {
+  useTerminal.setState({ cash: p.cash_balance, positions: p.positions, totalValue: p.total_value });
+}
+
+/** Place a market order; the store changes only when the server fills it. */
+export async function placeTrade(ticker: string, quantity: number, side: "buy" | "sell"): Promise<TradeResult> {
+  let r: Response;
+  try {
+    r = await fetch("/api/portfolio/trade", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ticker, quantity, side }),
+    });
+  } catch {
+    return { ok: false, text: "Trade not sent: connection to the server failed. Try again." };
+  }
+  const body = await r.json();
+  if (!r.ok) return { ok: false, text: typeof body.detail === "string" ? body.detail : body.detail[0].msg };
+  applyPortfolio(body.portfolio);
+  const t = body.trade;
+  const verb = t.side === "buy" ? "Bought" : "Sold";
+  return { ok: true, text: `${verb} ${formatQty(t.quantity)} ${t.ticker} @ ${formatPrice(t.price)}` };
+}
 
 // A non-200 or non-event-stream response closes an EventSource for good; the browser stops retrying.
 const REOPEN_DELAY_MS = 3000;
@@ -55,7 +91,7 @@ export function connect(): () => void {
     });
   fetch("/api/portfolio")
     .then((r) => r.json())
-    .then((p) => useTerminal.setState({ cash: p.cash_balance, totalValue: p.total_value }));
+    .then(applyPortfolio);
 
   let es: EventSource;
   let timer: ReturnType<typeof setTimeout> | undefined;
