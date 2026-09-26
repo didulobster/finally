@@ -8,6 +8,13 @@ const INPUT =
 const BUTTON =
   "h-8 w-16 text-sm font-semibold text-bg hover:brightness-110 active:brightness-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary";
 
+/** Result line color: muted idle, red rejection, green buy fill, neutral sell fill. */
+function resultColor(r: TradeResult | null): string {
+  if (r === null) return "text-muted";
+  if (!r.ok) return "text-down";
+  return r.side === "buy" ? "text-up" : "text-text";
+}
+
 /** Market order entry: typed ticker and quantity, Buy and Sell, and the last trade's result. */
 export function TradeBar() {
   const [ticker, setTicker] = useState("");
@@ -16,7 +23,6 @@ export function TradeBar() {
 
   const trade = async (side: "buy" | "sell") => setResult(await placeTrade(ticker, Number(qty), side));
 
-  const color = result === null ? "text-muted" : result.ok ? "text-up" : "text-down";
   const text = result?.text ?? "Market order · fills instantly at the live price";
   return (
     <div className="flex h-full flex-wrap items-center gap-2 px-3">
@@ -51,7 +57,7 @@ export function TradeBar() {
         role="status"
         aria-live="polite"
         title={text}
-        className={`ml-2 min-w-0 flex-1 truncate font-mono text-xs ${color}`}
+        className={`ml-2 min-w-0 flex-1 truncate font-mono text-xs ${resultColor(result)}`}
       >
         {text}
       </p>

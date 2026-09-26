@@ -81,10 +81,10 @@ All values are existing `@theme` tokens in `frontend/app/globals.css`.
 | Accent (10%) | `#ecad0a` (`text-accent` / `bg-accent`) | Reserved elements only (list below) |
 | Buy / Sell buttons | `#3fb950` (`bg-up`) / `#f85149` (`bg-down`), label `text-bg` | Buy is green and Sell is red (user decision 2026-09-26, the terminal convention). This overrides PLAN.md's purple-submit rule for these two buttons only; `bg-submit` purple stays reserved for later submit buttons (e.g. chat send). Dark `text-bg` labels give about 8.7:1 contrast on green and 5.9:1 on red. |
 | Primary / focus | `#209dd7` (`border-primary`, `outline-primary`) | Focus ring on trade inputs and the Buy/Sell buttons (`focus-visible`) |
-| Up / profit / success | `#3fb950` = `rgb(63, 185, 80)` | Positive P&L and % text, successful `trade-result`, "up" heatmap tiles, the P&L area when latest ≥ first snapshot |
+| Up / profit / success | `#3fb950` = `rgb(63, 185, 80)` | Positive P&L and % text, successful buy `trade-result`, "up" heatmap tiles, the P&L area when latest ≥ first snapshot |
 | Destructive / loss / error | `#f85149` = `rgb(248, 81, 73)` | Negative P&L and % text, rejected `trade-result`, "down" heatmap tiles, the P&L area when latest < first snapshot. No destructive actions exist in this phase. |
 | Flat / neutral | `#30363d` = `rgb(48, 54, 61)` (`border-border`) | Borders, table row dividers, "flat" heatmap tiles, chart grid lines |
-| Text | `#e6edf3` (`text-text`) | Primary text, heatmap tile text, button labels |
+| Text | `#e6edf3` (`text-text`) | Primary text, heatmap tile text, button labels, successful sell `trade-result` (user decision 2026-09-26, UAT G-02-3) |
 | Muted | `#8b949e` (`text-muted`) | Panel titles, column headers, empty/loading notes, zero P&L, the idle `trade-result` hint, chart axis text, input placeholders |
 
 Accent (`#ecad0a`) is reserved for:
@@ -115,7 +115,7 @@ The Phase 1 grid in `frontend/app/page.tsx` is unchanged. This phase only replac
 - `trade-buy` / `trade-sell`: `<button type="button">`, labels `Buy` / `Sell`, `h-8 w-16 text-sm font-semibold text-bg hover:brightness-110 active:brightness-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary`, with `bg-up` on Buy and `bg-down` on Sell. Both have `aria-label` `Buy shares` / `Sell shares`, and the visible labels stay `Buy` / `Sell`.
 - Both buttons stay enabled at all times, including while a request is in flight (D-04). There is no `<form>` element, so Enter does not submit (this avoids an ambiguous Buy/Sell on Enter).
 - After a success both inputs keep their values (D-01).
-- `trade-result`: `<p role="status" aria-live="polite">`, `truncate text-xs font-mono`, with `title={text}` so the full text shows on hover. It is always rendered, and three states follow in the copy table: idle (muted), success (`text-up`), rejected (`text-down`). It persists until the next trade and has no fade timer (D-02).
+- `trade-result`: `<p role="status" aria-live="polite">`, `truncate text-xs font-mono`, with `title={text}` so the full text shows on hover. It is always rendered, and four states follow in the copy table: idle (`text-muted`), buy success (`text-up`), sell success (`text-text`, neutral), rejected (`text-down`). It persists until the next trade and has no fade timer (D-02).
 - The store is written only on `r.ok` (D-06). A rejection leaves cash and positions untouched (TRAD-02).
 
 ### Positions table (`components/Positions.tsx`)
@@ -169,7 +169,7 @@ The Phase 1 grid in `frontend/app/page.tsx` is unchanged. This phase only replac
 | Trade input placeholders | `Ticker` · `Qty` |
 | `trade-result` idle (before any trade) | `Market order · fills instantly at the live price` (`text-muted`) |
 | `trade-result` buy success | `Bought {formatQty(qty)} {TICKER} @ {formatPrice(price)}`, e.g. `Bought 5 AAPL @ $190.12` (`text-up`) |
-| `trade-result` sell success | `Sold {formatQty(qty)} {TICKER} @ {formatPrice(price)}`, e.g. `Sold 1 MSFT @ $415.30` (`text-up`) |
+| `trade-result` sell success | `Sold {formatQty(qty)} {TICKER} @ {formatPrice(price)}`, e.g. `Sold 1 MSFT @ $415.30` (`text-text`, neutral; user decision 2026-09-26) |
 | `trade-result` rejected (400) | The backend `detail` string verbatim, e.g. `Insufficient cash: need $190,120,000.00, have $9,049.40` / `Insufficient shares: trying to sell 10 JPM, hold 0` (`text-down`). The backend text already names the problem and the numbers the user must change. |
 | `trade-result` rejected (422, bad input) | `detail[0].msg` verbatim, e.g. `Input should be greater than 0` (`text-down`) |
 | `trade-result` network failure | `Trade not sent: connection to the server failed. Try again.` (`text-down`; shown only if `fetch` itself rejects) |
@@ -218,7 +218,7 @@ Probe run 2026-09-26 (ui-consideration-probe, 19 applicable). Element kinds were
 
 | Interaction | Behavior |
 |-------------|----------|
-| Click Buy / Sell | POST `/api/portfolio/trade` with the raw ticker, `Number(qty)` and the side. On success, update the store from the response `portfolio`, show the green result and refetch history. On failure, show the red result and leave the store unchanged |
+| Click Buy / Sell | POST `/api/portfolio/trade` with the raw ticker, `Number(qty)` and the side. On success, update the store from the response `portfolio`, show the result line (green for a buy, neutral text for a sell) and refetch history. On failure, show the red result and leave the store unchanged |
 | Price tick (~500 ms) | Header total, positions Price/P&L/% and heatmap tiles recompute from `prices`. Rows never reorder. The P&L chart does not change |
 | Keyboard | Tab order: ticker → quantity → Buy → Sell. The focus-visible ring is `primary` blue. Enter does not submit |
 | Hover | Buy/Sell brighten (`brightness-110`). Heatmap tiles and a truncated `trade-result` show a native `title` tooltip. Table rows have no hover effect |

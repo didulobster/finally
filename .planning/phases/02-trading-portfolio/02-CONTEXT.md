@@ -21,7 +21,7 @@ Not in this phase: watchlist add/remove, ticker selection, main ticker chart (Ph
 
 ### Trade bar
 - **D-01:** After a successful trade, keep both the ticker and quantity inputs filled, so a trade is easy to repeat or reverse. The E2E `placeTrade` helper uses `fill()`, which overwrites.
-- **D-02:** `trade-result` stays visible until the next trade, with no fade timer. On success it shows a green fill line (e.g. "Bought 5 AAPL @ $190.12"). On rejection it shows the backend `detail` text verbatim in red (TRAD-02: "insufficient cash" / "insufficient shares").
+- **D-02:** `trade-result` stays visible until the next trade, with no fade timer. On a successful buy it shows a green fill line (e.g. "Bought 5 AAPL @ $190.12"); on a successful sell the fill line uses the neutral text color (e.g. "Sold 1 MSFT @ $415.30"). Amended 2026-09-26 by user decision (UAT G-02-3). On rejection it shows the backend `detail` text verbatim in red (TRAD-02: "insufficient cash" / "insufficient shares").
 - **D-03:** The ticker is typed only. Clicking a watchlist row does not prefill the trade bar in this phase.
 - **D-04:** Buy and Sell stay enabled while a request is in flight. Nothing is disabled.
 

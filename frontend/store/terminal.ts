@@ -22,8 +22,8 @@ export type Position = { ticker: string; quantity: number; avg_cost: number; cur
 
 type Portfolio = { cash_balance: number; positions: Position[] };
 
-/** Outcome of a trade, shown by the trade bar. */
-export type TradeResult = { ok: boolean; text: string };
+/** Outcome of a trade, shown by the trade bar; it carries the trade side. */
+export type TradeResult = { ok: boolean; side: "buy" | "sell"; text: string };
 
 /** One stored portfolio value from /api/portfolio/history. */
 export type Snapshot = { total_value: number; recorded_at: string };
@@ -72,15 +72,15 @@ export async function placeTrade(ticker: string, quantity: number, side: "buy" |
       body: JSON.stringify({ ticker, quantity, side }),
     });
   } catch {
-    return { ok: false, text: "Trade not sent: connection to the server failed. Try again." };
+    return { ok: false, side, text: "Trade not sent: connection to the server failed. Try again." };
   }
   const body = await r.json();
-  if (!r.ok) return { ok: false, text: typeof body.detail === "string" ? body.detail : body.detail[0].msg };
+  if (!r.ok) return { ok: false, side, text: typeof body.detail === "string" ? body.detail : body.detail[0].msg };
   applyPortfolio(body.portfolio);
   loadHistory();
   const t = body.trade;
   const verb = t.side === "buy" ? "Bought" : "Sold";
-  return { ok: true, text: `${verb} ${formatQty(t.quantity)} ${t.ticker} @ ${formatPrice(t.price)}` };
+  return { ok: true, side: t.side, text: `${verb} ${formatQty(t.quantity)} ${t.ticker} @ ${formatPrice(t.price)}` };
 }
 
 // A non-200 or non-event-stream response closes an EventSource for good; the browser stops retrying.

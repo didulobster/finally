@@ -11,6 +11,8 @@ test("buy shares: cash decreases and position appears", async ({ page }) => {
 
   await expect(page.getByTestId("position-row-AAPL")).toBeVisible();
   await expect(page.getByTestId("position-qty-AAPL")).toHaveText(/\b5(\.0+)?\b/);
+  await expect(page.getByTestId("trade-result")).toContainText("Bought");
+  await expect(page.getByTestId("trade-result")).toHaveCSS("color", "rgb(63, 185, 80)");
   await expect.poll(() => readNumber(cash)).toBeLessThan(before);
   const spent = before - (await readNumber(cash));
   expect(Math.abs(spent - 5 * price) / (5 * price)).toBeLessThan(0.02);
@@ -24,6 +26,8 @@ test("sell shares: cash increases and position updates, then disappears", async 
 
   const beforePartial = await readNumber(cash);
   await placeTrade(page, "MSFT", 1, "sell");
+  await expect(page.getByTestId("trade-result")).toContainText("Sold");
+  await expect(page.getByTestId("trade-result")).toHaveCSS("color", "rgb(230, 237, 243)");
   await expect(page.getByTestId("position-qty-MSFT")).toHaveText(/\b3(\.0+)?\b/);
   await expect.poll(() => readNumber(cash)).toBeGreaterThan(beforePartial);
 
@@ -40,6 +44,7 @@ test("rejected trades show an error and leave cash unchanged", async ({ page }) 
 
   await placeTrade(page, "NFLX", 1_000_000, "buy");
   await expect(page.getByTestId("trade-result")).toContainText(/insufficient cash/i);
+  await expect(page.getByTestId("trade-result")).toHaveCSS("color", "rgb(248, 81, 73)");
 
   await placeTrade(page, "JPM", 10, "sell");
   await expect(page.getByTestId("trade-result")).toContainText(/insufficient shares/i);
