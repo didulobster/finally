@@ -77,7 +77,7 @@ Plans:
   4. With positions held, the user sees a treemap heatmap sized by weight, with tiles colored green for profit and red for loss, and a canvas P&L line chart of portfolio value from snapshots; with no positions, an empty-positions message is shown
   5. The E2E specs `03-trading` and `04-portfolio-viz` pass against the container
 
-**Plans**: 3/3 plans executed
+**Plans**: 3/6 plans executed (02-04..02-06 are UAT gap closure)
 
 Plans:
 **Wave 1**
@@ -91,6 +91,18 @@ Plans:
 **Wave 3** *(blocked on Wave 2 completion)*
 
 - [x] 02-03-PLAN.md — Rebuild the `finally` tag and pass the probe in a container (tracer), then the compose Docker gate (9 passed), pytest, integrity gates, probe docs and end-of-phase visual checks
+
+**Wave 4** *(gap closure: G-02-3, G-02-1)*
+
+- [ ] 02-04-PLAN.md — Sell fill line in neutral text (buy green, rejection red) via a side on TradeResult (tracer), then a content-sized Trade panel so Buy/Sell stay visible at 768-850 px with chat open; both test-first with added 03-trading assertions; UI-SPEC and D-02 amended (TRAD-01, TRAD-02)
+
+**Wave 5** *(gap closure: G-02-5; blocked on Wave 4 completion)*
+
+- [ ] 02-05-PLAN.md — Package legitimacy checkpoint (blocking-human) for vitest 5.0.2 and @types/node ^24, then a minimal Vitest runner and a fixed-state test that selectTotalValue gives the same header total in all 24 position orders (HDR-02)
+
+**Wave 6** *(gap closure: G-02-1, G-02-3, G-02-5; blocked on Wave 5 completion)*
+
+- [ ] 02-06-PLAN.md — Rebuild the `finally` tag and probe a throwaway container (tracer), then the compose gate (10 passed), frontend unit test, integrity gates and the user's visual retest
 
 **UI hint**: yes
 
@@ -136,6 +148,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Live Terminal in Docker | 6/6 | Complete    | 2026-09-26 |
-| 2. Trading & Portfolio | 3/3 | In Progress|  |
+| 2. Trading & Portfolio | 3/6 | In Progress|  |
 | 3. Watchlist Management & Ticker Chart | 0/TBD | Not started | - |
 | 4. AI Copilot & Definition of Done | 0/TBD | Not started | - |
