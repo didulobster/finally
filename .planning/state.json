@@ -1,0 +1,33 @@
+{
+  "contract": "1.0.0",
+  "flavor": "core",
+  "milestone": null,
+  "phases": [
+    {
+      "number": "1",
+      "name": "Live Terminal in Docker",
+      "status": "in_progress"
+    },
+    {
+      "number": "2",
+      "name": "Trading & Portfolio",
+      "status": "pending"
+    },
+    {
+      "number": "3",
+      "name": "Watchlist Management & Ticker Chart",
+      "status": "pending"
+    },
+    {
+      "number": "4",
+      "name": "AI Copilot & Definition of Done",
+      "status": "pending"
+    }
+  ],
+  "next": {
+    "command": "/gsd:progress --next",
+    "label": "Advance to the next step (verify)",
+    "reason": "Phase 01 of 4 · 0% · ready to verify"
+  },
+  "updated_at": "2026-09-25T04:07:09.134Z"
+}
