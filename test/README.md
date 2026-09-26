@@ -34,3 +34,9 @@ npx playwright install chromium
 npx playwright test                 # BASE_URL defaults to http://localhost:8000
 npx playwright show-report
 ```
+
+## 502 recovery probe
+
+With the app running locally (see Local) and `test/node_modules` installed, run `node test/sse-502-probe.mjs http://127.0.0.1:8000` from the repo root.
+It puts a proxy in front of the app that answers the price stream with 502 for a few seconds, then checks
+that the status dot returns to LIVE with prices moving and a single live EventSource. It prints PASS, or FAIL with the stage.
