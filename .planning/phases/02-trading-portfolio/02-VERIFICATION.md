@@ -1,8 +1,8 @@
 ---
 phase: 02-trading-portfolio
-verified: 2026-09-26T08:40:00Z
-status: human_needed
-score: 15/19 must-haves verified (4 backstop truths need human evidence)
+verified: 2026-09-27T00:45:00Z
+status: gaps_found
+score: 31/33 must-haves verified (1 failed, 1 needs human confirmation)
 covered_files:
   - .planning/REQUIREMENTS.md
   - .planning/phases/02-trading-portfolio/02-01-PLAN.md
@@ -11,6 +11,13 @@ covered_files:
   - .planning/phases/02-trading-portfolio/02-02-SUMMARY.md
   - .planning/phases/02-trading-portfolio/02-03-PLAN.md
   - .planning/phases/02-trading-portfolio/02-03-SUMMARY.md
+  - .planning/phases/02-trading-portfolio/02-04-PLAN.md
+  - .planning/phases/02-trading-portfolio/02-04-SUMMARY.md
+  - .planning/phases/02-trading-portfolio/02-05-PLAN.md
+  - .planning/phases/02-trading-portfolio/02-05-SUMMARY.md
+  - .planning/phases/02-trading-portfolio/02-06-PLAN.md
+  - .planning/phases/02-trading-portfolio/02-06-SUMMARY.md
+  - frontend/README.md
   - frontend/app/page.tsx
   - frontend/components/Header.tsx
   - frontend/components/Heatmap.tsx
@@ -20,46 +27,66 @@ covered_files:
   - frontend/package-lock.json
   - frontend/package.json
   - frontend/store/format.ts
+  - frontend/store/portfolio.test.ts
   - frontend/store/portfolio.ts
   - frontend/store/terminal.ts
   - test/README.md
+  - test/e2e/03-trading.spec.ts
   - test/portfolio-probe.mjs
-covered_digest: "v1:sha256:140bc09059ff1371816562eb5026ab5b6146343e1d7bada05dd5ba35a8d3b4b9"
+covered_digest: "v1:sha256:24457c9a48c71617801e448ef24a117e1a87539d3d4677138778b0853d0cd45f"
 behavior_unverified: 0
 overrides_applied: 0
-flagged_prohibitions: 2
+flagged_prohibitions: 1
+re_verification:
+  previous_status: human_needed
+  previous_score: 15/19
+  gaps_closed:
+    - "G-02-3: Buy is green, Sell is neutral text, rejections are red (UAT test 3)"
+    - "G-02-1: Buy and Sell stay visible at 768-850 px with the chat drawer open"
+    - "Backstops resolved by UAT: heatmap tile legibility (test 1), P&L canvas sizing (test 2), history race (test 4)"
+    - "Flagged prohibitions from the first verification resolved by UAT: success-line price (test 6), 02-02 package approval (test 7)"
+  gaps_remaining:
+    - "G-02-5: header total does not depend on summation order, proven by a unit test"
+  regressions: []
+gaps:
+  - truth: "Header total does not depend on the order positions are summed, proven by a unit test that holds state fixed and sums positions in different orders (UAT G-02-5; 02-05 must_have truth 1)"
+    status: failed
+    reason: "The property is false and the committed test cannot detect it. selectTotalValue is a plain float reduce, so near a half-cent the displayed total depends on order. The verifier reproduced this against the real selectTotalValue and formatPrice (Vitest scratch test, removed afterwards): cash 7916.37 with A=4.368@370.93, B=4.348@487.04, C=6.396@38.29 gives A,B,C = 11899.145 -> '$11,899.15' and B,A,C = 11899.144999999999 -> '$11,899.14'. frontend/store/portfolio.test.ts still passes, because its fixture total (4716.834494) is 0.0005 from a rounding boundary. The test would pass for any summation order, including the order-dependent code that ships today (review WR-01)."
+    artifacts:
+      - path: "frontend/store/portfolio.ts"
+        issue: "selectTotalValue sums floats (line 11), so the rounded header total depends on order at half-cent boundaries"
+      - path: "frontend/store/portfolio.test.ts"
+        issue: "Its only fixture sits far from a half-cent boundary, so the order-independence test is vacuous; its comment says what must not change is the cents the header shows, which is false in general"
+    missing:
+      - "Make the total exactly order-independent, for example by summing in integer cents (Math.round(qty * livePrice * 100), starting from Math.round(cash * 100), then / 100), which also matches the backend's per-position rounding (backend/app/portfolio.py:87,92)"
+      - "Add the half-cent boundary fixture (cash 7916.37; 4.368@370.93, 4.348@487.04, 6.396@38.29) and assert exact toBe equality across every permutation; show it fails on the current reduce first"
+      - "Or, if the float sum is kept, restate the G-02-5 truth and the test comment to what actually holds (orderings agree within 1e-9; the backend's ORDER BY ticker makes the runtime order fixed) and record that as an accepted override"
 human_verification:
-  - test: "Run scripts/start_mac.sh (the finally tag is current; the running finally container is still on the old image ca44884f, so restart it), open http://localhost:8000 at about 1600x1000, buy 3 to 6 tickers (AAPL 10, MSFT 5, GOOGL 8, TSLA 4, NVDA 2)."
-    expected: "Every heatmap tile holding at least 10% of invested value shows a readable ticker and P&L %."
-    why_human: "Backstop truth (02-02). Tile legibility is visual; spec 04 only checks tile area > 0."
-  - test: "Same session: watch the P&L panel for about a minute and resize the window once."
-    expected: "The canvas fills the panel body with no scrollbar, and its size does not keep growing or jittering."
-    why_human: "Backstop truth (02-02, RESEARCH A5). An autoSize resize feedback loop can only be seen at runtime."
-  - test: "Same session: check Buy is green, Sell is red, and a long rejection (for example NFLX 1000000 Buy) stays on one line with the full text on hover."
-    expected: "Button colors match UI-SPEC; trade-result truncates to one line and the title shows the full text."
-    why_human: "Visual styling; no spec asserts colors or truncation."
-  - test: "Place a trade just before a 30 s history poll fires (watch the P&L data-points in devtools)."
-    expected: "The new snapshot appears after the trade or, at the latest, on the next poll; the chart never throws on duplicate times."
-    why_human: "Backstop truth (02-02 edge PORT-04 concurrency). Needs a timed race; code review IN-02 notes a poll response can briefly overwrite the post-trade list, which self-heals within 30 s and matches the truth wording."
-  - test: "Accept or reject: total-value order independence (02-01 backstop). selectTotalValue is a pure reduce over the server's alphabetical positions list; the verifier observed alphabetical rows and a matching total, but no test holds the state fixed and re-renders."
-    expected: "Accept as low risk, or ask for a unit test."
-    why_human: "Backstop truth: presence and wiring never qualify under the verification rules."
-  - test: "Prohibition (02-01, test-tier): the success line shows only the backend trade.price, trade.quantity and trade.ticker. Code at frontend/store/terminal.ts:81-83 builds it from body.trade; the probe proves the ticker comes from the response ('nvda' typed, 'NVDA' shown) but no test compares the displayed price to the response price."
-    expected: "Confirm by reading terminal.ts:81-83, or add a test."
-    why_human: "unverified-prohibition — human review recommended (test-tier with no dedicated negative test)."
-  - test: "Prohibition (02-02, test-tier): lightweight-charts, d3-hierarchy and @types/d3-hierarchy were installed only after your legitimacy approval."
-    expected: "Confirm you approved before commit 9485445 (the first commit containing the packages)."
-    why_human: "unverified-prohibition — human review recommended. Git history cannot show when approval happened."
+  - test: "Check that nothing else listens on port 8000 (lsof -nP -iTCP:8000 -sTCP:LISTEN), run scripts/start_mac.sh, and open http://localhost:8000 at about 1600x1000. Buy 1 AAPL, sell 1 AAPL, then try to sell 1000 AAPL. Narrow the window to about 800 px with the AI chat drawer open."
+    expected: "The Bought line is green, the Sold line is the normal light text color, and the rejection is red. At about 800 px, Buy and Sell are visible under the inputs with no scrolling inside the Trade panel. At full width the trade bar is one row."
+    why_human: "The user's own visual retest of G-02-1 and G-02-3 on the rebuilt tag (02-06 end-of-phase human check). The E2E suite and the verifier's scratch check already assert these, so this is confirmation, not discovery."
+  - test: "Confirm you typed 'approved' at the 02-05 Task 1 checkpoint for vitest 5.0.2, its vite 8.x peer and @types/node ^24 before commit fe894d3."
+    expected: "Yes, approval came before the install."
+    why_human: "unverified-prohibition (02-05, test-tier): 'MUST NOT install before the human replies approved'. Git history cannot show when approval happened; only the SUMMARY claims it."
 ---
 
 # Phase 2: Trading & Portfolio Verification Report
 
 **Phase Goal:** The user can trade from the trade bar and see the result across the portfolio: cash, positions table, heatmap, P&L chart, and live total value
-**Verified:** 2026-09-26T08:40:00Z
-**Status:** human_needed
-**Re-verification:** No — initial verification
+**Verified:** 2026-09-27T00:45:00Z
+**Status:** gaps_found
+**Re-verification:** Yes, after gap-closure plans 02-04, 02-05 and 02-06. This report replaces the 2026-09-26 report, which had no `gaps:` section, so every truth was checked again.
 
-The verifier did not rely on SUMMARY claims. It rebuilt the frontend, ran the binding E2E subset and the portfolio probe on a fresh temp DB (port 8010), ran the compose E2E gate in Docker itself, ran pytest, and ran its own Playwright edge check (27 assertions) on a second fresh DB.
+The verifier did not rely on the SUMMARY claims. It ran these checks itself:
+
+- rebuilt the static export
+- ran the Phase 2 E2E subset and the portfolio probe on a fresh temp DB (port 8010)
+- ran a scratch layout and color check across seven viewports
+- ran the compose E2E gate in Docker
+- ran Vitest, pytest and the integrity gates
+- reproduced review WR-01 against the real `selectTotalValue`
+
+**MVP-mode note:** ROADMAP marks Phase 2 `Mode: mvp`, but `user-story.validate` rejects the goal because it is not in "As a …, I want to …, so that …." form. As in the first verification and in every plan's "Phase Goal" note, no user story was invented. This report uses standard goal-backward verification and omits the User Flow Coverage table. To make this consistent, run `/gsd mvp-phase 2` to add a user-story goal, or clear `mode: mvp`.
 
 ## Goal Achievement
 
@@ -67,143 +94,147 @@ The verifier did not rely on SUMMARY claims. It rebuilt the frontend, ran the bi
 
 | # | Truth | Status | Evidence |
 |---|-------|--------|----------|
-| 1 | SC1: User buys or sells a typed ticker and quantity; cash changes and the position appears, updates, or disappears at zero | ✓ VERIFIED | 03-trading buy and sell tests passed locally and in Docker. Verifier check: "Bought 2 AAPL @ $190.05", position-qty-AAPL "2", positions-empty removed, cash dropped; selling 2 AAPL removed position-row-AAPL and its heatmap tile |
-| 2 | SC2: A rejected trade shows the backend text and leaves cash and positions unchanged | ✓ VERIFIED | 03-trading rejection test passed. Verifier check: "Insufficient cash: need $600,050,000.00, have $10,000.00" in text-down, cash unchanged, positions-empty still shown; "Insufficient shares: trying to sell 5 AAPL, hold 2", qty still 2, cash unchanged. Code: `applyPortfolio` only runs after `r.ok` (terminal.ts:78-79) |
-| 3 | SC3: Header total equals cash + live positions value and updates on every tick and after every trade | ✓ VERIFIED | Header.tsx:15 `useTerminal(selectTotalValue)`; portfolio.ts:9-12 reduces qty x livePrice over positions. portfolio-probe PASS (identity on 20 samples, 16 distinct totals while cash held). Verifier check: total 10000.03 = cash 8844.53 + Σ qty x price 1155.50 with 3 positions |
-| 4 | SC4: Heatmap sized by weight, green profit and red loss; canvas P&L chart from snapshots; empty-positions message with no positions | ✓ VERIFIED | Heatmap.tsx uses d3 `treemapSquarify` over live market value with inline rgba colors; PnlChart.tsx uses `addSeries(AreaSeries` and setData from /api/portfolio/history. 04-portfolio-viz 3/3 passed. Verifier check: fresh DB shows positions-empty text and the heatmap empty note, zero tiles; a single position tile fills the heatmap (478x286 = 478x286); data-points went 1 -> 2 after a trade; canvas present |
-| 5 | SC5: 03-trading and 04-portfolio-viz pass against the container | ✓ VERIFIED | Verifier ran `docker compose -f test/docker-compose.test.yml` build and run with 01, 03, 04, 06: `9 passed (5.6s)`, then `down -v` (ps -a empty) |
-| 6 | Success line uses the response trade object; inputs keep values; Buy and Sell never disabled; no form | ✓ VERIFIED | terminal.ts:81-83; TradeBar.tsx has no `disabled=` and no `<form`. Verifier check: inputs still "AAPL"/"2" after the trade |
-| 7 | Empty quantity shows the 422 msg, empty ticker shows "Invalid ticker", lowercase "nvda" fills as NVDA | ✓ VERIFIED | portfolio-probe stages empty-inputs and lowercase PASS |
-| 8 | Positions: 6 columns, live Price/P&L/%, alphabetical, colored by sign | ✓ VERIFIED | Positions.tsx:26-57. Verifier check: rows AAPL, GOOGL, TSLA in order; probe row P&L identity passed |
-| 9 | positions-empty after load with zero positions; "Loading positions…" while cash is null | ✓ VERIFIED | Positions.tsx:14-21. Verifier check read the exact empty text on a fresh DB |
-| 10 | selectTotalValue returns null until loaded and does not round; /api/portfolio fetched once; one EventSource | ✓ VERIFIED | Grep: no toFixed/Math.round in portfolio.ts, no totalValue in terminal.ts, one `fetch("/api/portfolio")`, one `new EventSource` |
-| 11 | lightweight-charts 5.2.1, d3-hierarchy 3.1.2, @types/d3-hierarchy 3.1.7 in package.json and lockfile, no install scripts | ✓ VERIFIED | package.json pins exactly; lockfile check shows all three with no hasInstallScript |
-| 12 | P&L chart: deduped to one point per second, history on mount, after trades and every 30 s, green/red by last vs first, fitContent | ✓ VERIFIED | PnlChart.tsx:19-23, 34-35, 52-62; terminal.ts:80. Post-trade refresh observed (1 -> 2 points) |
-| 13 | Heatmap tile data-pnl and rgb/rgba color agree; intensity min(1, 0.35 + abs(pct)/5); title "{T} · {value} · {pct}" | ✓ VERIFIED | Heatmap.tsx:22-27, 41, 53; spec 04 color check passed locally and in Docker |
-| 14 | Heatmap "Loading holdings…" and empty note; P&L "Waiting for the first portfolio snapshot…" overlay | ✓ VERIFIED | Heatmap.tsx:34-37 (empty note observed on fresh DB); PnlChart.tsx:67-69 (not observable: the backend records a startup snapshot, so a fresh DB already has 1 point) |
-| 15 | Docker tag rebuilt after the last code commit; bundle has no key names; pytest green; binding tests unchanged; README documents the probe | ✓ VERIFIED | Image created 08:10:00Z after ec8bca7 (08:07:14Z); `grep OPENROUTER|sk-or-` in /app/backend/static finds nothing and index.html has "Market order"; pytest 75 passed; `git diff --quiet d92088b -- test/e2e ...` rc 0; README has `## Portfolio probe` |
-| 16 | Backstop: total-value does not depend on summation order; store keeps server order | ? insufficient_spec | Pure reduce in server order; no test holds state fixed across renders. Human item |
-| 17 | Backstop: heatmap tiles with >= 10% weight legible at 1600x1000 with 3-6 positions | ? insufficient_spec | Visual. Human item |
-| 18 | Backstop: P&L canvas fills the panel with no scrollbar or resize loop | ? insufficient_spec | Visual/runtime. Human item |
-| 19 | Backstop: overlapping history fetches replace history wholesale; no duplicate times reach setData | ? insufficient_spec | Map dedupe present (PnlChart.tsx:20-21); race not exercised. Human item |
+| 1 | SC1: buy or sell a typed ticker and quantity; cash changes; the position appears, updates, or disappears at zero | ✓ VERIFIED | 03-trading buy and sell passed locally (fresh DB) and in the compose container. The scratch check saw "Bought 1 AAPL @ $189.98", then "Sold 1 AAPL @ $190.00" |
+| 2 | SC2: a rejected trade shows the backend text and leaves cash and positions unchanged | ✓ VERIFIED | 03-trading "rejected trades" passed in both runs. `applyPortfolio` still runs only after `r.ok` (terminal.ts:78-79). The scratch check saw "Insufficient shares: trying to sell 99999 NFLX, hold 0" |
+| 3 | SC3: header total = cash + live positions value, updating on every tick and after every trade | ✓ VERIFIED | `portfolio-probe: PASS totals=20 samples=20` (identity on every sample, 20 distinct totals). Header uses `useTerminal(selectTotalValue)` |
+| 4 | SC4: heatmap sized by weight with green/red tiles, canvas P&L chart from snapshots, empty-positions message | ✓ VERIFIED | 04-portfolio-viz 3/3 passed locally and in the container. Heatmap and PnlChart are unchanged since the first verification |
+| 5 | SC5: 03-trading and 04-portfolio-viz pass against the container | ✓ VERIFIED | The verifier ran `docker compose -f test/docker-compose.test.yml` build and run (01, 03, 04, 06): `10 passed (5.2s)`, then `down -v`. `ps -a` for the project is empty |
+| 6-15 | First-verification plan truths 6-15 (success line from the response, D-01/D-04, the 422 and "Invalid ticker" messages, positions columns and order, empty and loading states, selector purity, package pins, P&L dedupe and poll, heatmap color and title, empty notes) | ✓ VERIFIED (regression) | The code for these is unchanged: `git diff 4264d02` touches only the result color, the `TradeResult.side` field, and the Trade panel and bar height classes. The probe's empty-inputs and lowercase stages passed, and the E2E subset passed |
+| 16 | Backstop 02-02: heatmap tiles with ≥10% weight legible at 1600x1000 | ✓ VERIFIED | Observed by the user: UAT test 1 pass |
+| 17 | Backstop 02-02: P&L canvas fills its panel with no scrollbar or resize loop | ✓ VERIFIED | Observed by the user: UAT test 2 pass |
+| 18 | Backstop 02-02: overlapping history fetches, with no duplicate times reaching setData | ✓ VERIFIED | Observed by the user: UAT test 4 pass |
+| 19 | **G-02-5 / 02-01 backstop / 02-05 truth 1:** header total does not depend on summation order, proven by a unit test | ✗ FAILED | See the gap below. The verifier reproduced a 1-cent display difference between orders A,B,C and B,A,C using the shipped `selectTotalValue`. The committed test passes on this order-dependent code, so it cannot catch the defect |
+| 20 | **G-02-3 / 02-04 truth 1:** Bought is green rgb(63,185,80), Sold is neutral rgb(230,237,243), rejection is red rgb(248,81,73) | ✓ VERIFIED | `resultColor` (TradeBar.tsx:11-15) branches on `!r.ok` before `side`. `side` is set on all three `placeTrade` returns (terminal.ts). The E2E `toHaveCSS` assertions passed locally and in Docker. The scratch check also confirmed a rejected **sell** is red (`text-down`), which no test asserts (review IN-01) |
+| 21 | **G-02-1 / 02-04 truth 2:** Buy and Sell stay visible at every desktop width, including 768-850 px with the chat drawer open | ✓ VERIFIED | `md:h-24` removed (page.tsx:32); the bar uses `min-h-16`. The E2E test at 768x600 passed in both runs. The scratch check with the chat drawer at 320 px, at 768, 800, 820, 850, 900, 1024 and 1600: Buy and Sell in view and the panel body never overflows at any width |
+| 22 | 02-04 truth 3: one row at 1600x1000; the local run reports 10 passed; the probe prints PASS | ✓ VERIFIED | Scratch check: oneRow=true at 1600 and 1024. Local run: `10 passed (5.2s)`, probe PASS |
+| 23 | 02-04 truth 4: each new E2E assertion failed before the fix | ✓ VERIFIED | Pre-fix code: `git show 0a1002f^` has `result.ok ? "text-up"` for every fill, so a sell rendered rgb(63,185,80) and the new assertion rejects it. `git show 100d2dc^` has `md:h-24` plus `h-full`, the clipping root cause measured in the debug session |
+| 24 | 02-04 truth 5: 02-UI-SPEC.md and 02-CONTEXT.md match the code | ✓ VERIFIED | UI-SPEC lines 87, 106, 110, 118 and 172 and CONTEXT D-02 (line 24) and line 41 were amended as planned |
+| 25 | 02-05 truth 2: the test pins cash + Σ qty × live price, with the current_price fallback (JPM) | ✓ VERIFIED | portfolio.test.ts: `toBeCloseTo(4716.834494, 9)`, and JPM is missing from `prices`. Without the fallback the result would be NaN and the test would fail |
+| 26 | 02-05 truth 3: vitest, vite and @types/node were installed only after the user approved | ? UNCERTAIN | Git cannot show when approval happened; only the 02-05 SUMMARY claims it. Human item |
+| 27 | 02-05 truth 4: minimal runner (only vitest added, pinned 5.0.2; @types/node ^24; `vitest run`; no config); build and lint pass; selectTotalValue unchanged | ✓ VERIFIED | devDependencies match the planned set exactly. The only install-script entries are fsevents and unrs-resolver. No `vite*.config.*`. Build and lint rc 0 (verifier run). `git diff 0196ca8 -- frontend/store/portfolio.ts` is empty |
+| 28 | 02-06 truth 1: `docker build -t finally .` succeeds at HEAD and the tag holds the gap-closure code | ✓ VERIFIED | The `finally` image was created 2026-09-27T00:20:35Z, after the last code commit (fe894d3, 00:17:59Z); commits after it touch only `.planning`. The compose `build finally` also succeeded (verifier run). Note: the image ID is now `sha256:43e7664e…`, not the `d3423355…` quoted in the SUMMARY; the created timestamp matches, so this is likely a config vs manifest digest difference |
+| 29 | 02-06 truth 2: the rebuilt tag serves "Market order" and the probe passes | ✓ VERIFIED | `docker run … finally` shows `index.html` contains "Market order" (1 hit). The verifier ran the probe against the fresh local build, not a throwaway container. The container path is covered by the compose E2E run, which exercises the same trade and total flow |
+| 30 | 02-06 truth 3: compose path reports 10 passed, including the sell-color and narrow-width tests | ✓ VERIFIED | Verifier compose run: `10 passed (5.2s)`, with the narrow-width test listed as #6 |
+| 31 | 02-06 truth 4: `npm --prefix frontend test` passes | ✓ VERIFIED | `Test Files 1 passed (1)`, `Tests 2 passed (2)`. The run passes, but the property its second test claims is false (truth 19) |
+| 32 | 02-06 truth 5: binding tests have additions only; backend unchanged; no absolute URLs; no key names in the bundle | ✓ VERIFIED | numstat vs d92088b: `12 0 test/e2e/03-trading.spec.ts` only. The backend diff vs 0196ca8 is empty. No `https?://` matches in frontend app, components or store. 0 files in `/app/backend/static` match `OPENROUTER` or `sk-or-`. pytest: 75 passed |
+| 33 | 02-06 truth 6: the user's `finally` container and `finally-data` volume are untouched | ✓ VERIFIED | `finally-data` is still listed. No `finally` or `finally-phase2-check` container exists. The verifier used only temp DBs, port 8010 and the test compose project (then `down -v`) |
 
-**Score:** 15/19 truths verified (0 present-but-behavior-unverified; 4 backstop truths routed to human)
+**Score:** 31/33 truths verified (1 failed, 1 uncertain; 0 present-but-behavior-unverified)
 
 ### Required Artifacts
 
 | Artifact | Expected | Status | Details |
 |----------|----------|--------|---------|
-| `frontend/store/terminal.ts` | positions, history, applyPortfolio, placeTrade, loadHistory | ✓ VERIFIED | All exported and used |
-| `frontend/store/portfolio.ts` | livePrice, selectTotalValue | ✓ VERIFIED | Used by Header, Positions, Heatmap |
-| `frontend/store/format.ts` | formatQty, formatSignedPrice | ✓ VERIFIED | Used by Positions and terminal.ts |
-| `frontend/components/TradeBar.tsx` | inputs, buttons, trade-result | ✓ VERIFIED | Rendered in page.tsx:33 |
-| `frontend/components/Positions.tsx` | table plus empty and loading states | ✓ VERIFIED | Rendered in page.tsx:46 |
-| `frontend/components/Header.tsx` | derived total-value | ✓ VERIFIED | `useTerminal(selectTotalValue)` |
-| `frontend/components/Heatmap.tsx` | squarified treemap | ✓ VERIFIED | Rendered in page.tsx:40 |
-| `frontend/components/PnlChart.tsx` | LWC v5 area chart | ✓ VERIFIED | Rendered in page.tsx:43 |
-| `frontend/package-lock.json` | three packages | ✓ VERIFIED | Present, exact versions |
-| `test/portfolio-probe.mjs` | edge probe | ✓ VERIFIED | Ran: PASS |
-| `test/README.md` | probe docs | ✓ VERIFIED | Section present |
+| `frontend/store/terminal.ts` | `TradeResult` carries `side` | ✓ VERIFIED | Type plus all three returns |
+| `frontend/components/TradeBar.tsx` | `resultColor()`, root `min-h-16` | ✓ VERIFIED | Present and used on the trade-result `<p>` |
+| `frontend/app/page.tsx` | Trade panel without a fixed md height | ✓ VERIFIED | `${STACKED} md:shrink-0` |
+| `test/e2e/03-trading.spec.ts` | color assertions plus the narrow-width test | ✓ VERIFIED | 12 added lines, 0 deleted |
+| `frontend/store/portfolio.test.ts` | order-independence and correctness test | ✗ STUB (for its order claim) | The correctness test is substantive. The order test is vacuous: its fixture cannot expose order dependence |
+| `frontend/package.json` / `package-lock.json` | `vitest run`, vitest 5.0.2, @types/node ^24 | ✓ VERIFIED | `npm ci` in the Docker stage succeeded |
+| `frontend/README.md` | `npm test` line | ✓ VERIFIED | Line 4 |
 
 ### Key Link Verification
 
 | From | To | Via | Status |
 |------|----|-----|--------|
-| TradeBar.tsx | terminal.ts | `placeTrade(` in onClick, result into local state | ✓ WIRED |
-| terminal.ts | backend `/api/portfolio/trade` | `fetch("/api/portfolio/trade"`, applyPortfolio on ok | ✓ WIRED (api.py:44-51 returns trade + portfolio) |
-| terminal.ts connect() | applyPortfolio | `.then(applyPortfolio)` | ✓ WIRED |
-| Header.tsx | portfolio.ts | `useTerminal(selectTotalValue)` | ✓ WIRED |
-| Positions.tsx / Heatmap.tsx | portfolio.ts | `livePrice(` | ✓ WIRED |
-| PnlChart.tsx | terminal.ts | `loadHistory()` + `setInterval(loadHistory, HISTORY_POLL_MS)` | ✓ WIRED |
-| terminal.ts | backend `/api/portfolio/history` | `fetch("/api/portfolio/history")` | ✓ WIRED (api.py:54-56) |
-| PnlChart.tsx | lightweight-charts | `addSeries(AreaSeries` | ✓ WIRED |
-| Heatmap.tsx | d3-hierarchy | `treemapSquarify` | ✓ WIRED |
-| page.tsx | all four components | `<TradeBar />`, `<Positions />`, `<Heatmap />`, `<PnlChart />` | ✓ WIRED; no "arrives in Phase 2" text left |
-| test/docker-compose.test.yml | Dockerfile | `context: ..` | ✓ WIRED (gate ran) |
+| TradeBar.tsx | terminal.ts | `resultColor(result)` reads `ok` and `side` from `placeTrade`'s result | ✓ WIRED |
+| 03-trading.spec.ts | TradeBar.tsx | `toHaveCSS("color", …)` on trade-result; `toBeInViewport({ ratio: 1 })` on Buy and Sell | ✓ WIRED (passes; the pre-fix code fails it) |
+| page.tsx | TradeBar.tsx | the Trade `Panel` wraps `<TradeBar />` and sizes to it | ✓ WIRED |
+| portfolio.test.ts | portfolio.ts / format.ts | imports `selectTotalValue` and `formatPrice` | ✓ WIRED; the order assertion is too weak (truth 19) |
+| Dockerfile | package-lock.json | `RUN npm ci`, then `npm run build` type-checks the test file | ✓ WIRED (compose build succeeded) |
+| docker-compose.test.yml | Dockerfile | `context: ..` | ✓ WIRED (verifier gate ran) |
 
 ### Data-Flow Trace (Level 4)
 
 | Artifact | Data | Source | Real data | Status |
 |----------|------|--------|-----------|--------|
-| Header total-value | cash, positions, prices | GET /api/portfolio, trade response, SSE | Yes (ticks observed by probe) | ✓ FLOWING |
-| Positions rows | positions, prices | Same | Yes | ✓ FLOWING |
-| Heatmap tiles | positions, prices | Same | Yes | ✓ FLOWING |
-| PnlChart | history | GET /api/portfolio/history (SQLite portfolio_snapshots) | Yes (1 -> 2 points after a trade) | ✓ FLOWING |
+| trade-result color | `TradeResult.side` | server `body.trade.side` on success; the requested side on failure | Yes | ✓ FLOWING |
+| Header total-value | cash, positions, prices | /api/portfolio, the trade response, SSE | Yes (20 distinct totals in the probe) | ✓ FLOWING |
+| Positions / Heatmap / PnlChart | unchanged since the first verification | same | Yes (E2E passed) | ✓ FLOWING |
 
 ### Behavioral Spot-Checks
 
 | Behavior | Command | Result | Status |
 |----------|---------|--------|--------|
-| Lint | `npm --prefix frontend run lint` | rc 0 | ✓ PASS |
-| Static export build | `npm --prefix frontend run build` (sandbox off) | rc 0, `/` prerendered | ✓ PASS |
-| Local E2E subset (fresh temp DB, :8010) | playwright 01+03+04+06, grep-invert "clicking a ticker" | 9 passed (5.5s) | ✓ PASS |
-| Portfolio probe | `node test/portfolio-probe.mjs http://127.0.0.1:8010` | `PASS totals=16 samples=20` | ✓ PASS |
-| Verifier edge check (second fresh DB) | scratchpad verify-check.mjs | 27/27 OK | ✓ PASS |
-| Docker compose gate | compose build + run 01+03+04+06 | 9 passed (5.6s); down -v clean | ✓ PASS |
-| Backend pytest | `uv run --directory backend pytest -q` | 75 passed | ✓ PASS |
-| Image bundle secrets | `docker run ... grep OPENROUTER|sk-or-` | none | ✓ PASS |
+| Order dependence of the header total (WR-01) | scratch Vitest file calling the real `selectTotalValue` and `formatPrice` (removed afterwards) | `ABC 11899.145 $11,899.15` vs `BAC 11899.144999999999 $11,899.14`; the assertion failed | ✗ FAIL (confirms the gap) |
+| Frontend unit tests | `npm --prefix frontend test` | 1 file, 2 passed | ✓ PASS |
+| Static export plus lint | `npm --prefix frontend run build && … lint` (sandbox off) | build ok, `/` prerendered; lint rc 0 | ✓ PASS |
+| Local E2E subset (fresh DB, :8010) | playwright 01+03+04+06, grep-invert "clicking a ticker" | `10 passed (5.2s)` | ✓ PASS |
+| Portfolio probe | `node test/portfolio-probe.mjs http://127.0.0.1:8010` | `PASS totals=20 samples=20` | ✓ PASS |
+| Layout and colors across widths (scratch, removed) | Playwright at 768-1600 plus three trades | all widths OK; rejected sell red, buy green, sell neutral | ✓ PASS |
+| Compose gate in Docker | compose build plus run 01+03+04+06 | `10 passed (5.2s)`; `down -v` clean | ✓ PASS |
+| Backend | `uv run --directory backend pytest -q` | 75 passed | ✓ PASS |
+| Image bundle | `docker run --entrypoint sh finally -c "grep …"` | "Market order" present; 0 key hits | ✓ PASS |
 
 ### Probe Execution
 
 | Probe | Command | Result | Status |
 |-------|---------|--------|--------|
-| `test/portfolio-probe.mjs` | `node test/portfolio-probe.mjs http://127.0.0.1:8010` | exit 0, `portfolio-probe: PASS totals=16 samples=20` | PASS |
+| `test/portfolio-probe.mjs` | `node test/portfolio-probe.mjs http://127.0.0.1:8010` | exit 0, `portfolio-probe: PASS totals=20 samples=20` | PASS |
 | `scripts/*/tests/probe-*.sh` | none found | n/a | n/a |
 
 ### Prohibitions
 
 | Plan | Prohibition | Tier | Disposition |
 |------|-------------|------|-------------|
-| 02-01 | No store write before a 200 | test | ✓ Enforced: 03-trading rejection test and the verifier check (cash and positions unchanged) |
-| 02-01 | Success line only from response trade fields | test | ⚠️ Flagged: code is correct, no dedicated test for price. Human item |
-| 02-01/02/03 | No edits to binding test files | test | ✓ Enforced: `git diff --quiet d92088b` rc 0 |
-| 02-01 | No use of the user's DB, container, or volume | test | ✓ User's `finally` container still Up 6 hours on image ca44884f; verifier also used only temp DBs and the test compose project |
-| 02-02 | No fabricated or appended P&L points | judgment | Non-authoritative LLM verdict: holds. setData receives only `toPoints(history)`; 1 -> 2 points after one trade |
-| 02-02 | No cash tile; size by live market value | judgment | Non-authoritative LLM verdict: holds. Tiles come from positions only; one position fills the whole heatmap |
-| 02-02 | No install before human approval | test | ⚠️ Flagged: not auditable from git. Human item |
-| 02-03 | Do not touch the user's container or volume | test | ✓ Container uptime and image unchanged |
+| 02-04 | No existing test/e2e line edited; only lines added to 03-trading | test | ✓ Enforced: numstat `12 0` |
+| 02-04 | No change to result copy, button colors, D-01 or D-04 | test | ✓ Enforced: the diff shows only the color function and height classes; E2E text assertions pass |
+| 02-04 | Panel.tsx not edited | test | ✓ Enforced: the diff since 4264d02 is empty |
+| 02-05 | No install before human approval | test | ⚠️ Flagged: not auditable from git. Human item |
+| 02-05 | selectTotalValue unchanged | test | ✓ Enforced: the diff vs 0196ca8 is empty. The gap fix will need to lift this for the next plan |
+| 02-06 | No test edits to make the gate pass | test | ✓ Enforced: numstat |
+| 02-06 | User's container and volume untouched | test | ✓ Volume present; no user container existed |
 
 ### Requirements Coverage
 
 | Requirement | Source Plan | Status | Evidence |
 |-------------|-------------|--------|----------|
-| TRAD-01 | 02-01, 02-03 | ✓ SATISFIED | Truth 1, 7 |
-| TRAD-02 | 02-01, 02-03 | ✓ SATISFIED | Truth 2, 7 (see WR-02 warning for non-JSON errors) |
-| HDR-02 | 02-01, 02-03 | ✓ SATISFIED | Truth 3, 10 |
-| PORT-01 | 02-01, 02-03 | ✓ SATISFIED | Truth 1, 8 |
-| PORT-02 | 02-01, 02-03 | ✓ SATISFIED | Truth 9 (verifier observed positions-empty; no E2E asserts it) |
-| PORT-03 | 02-02, 02-03 | ✓ SATISFIED | Truth 4, 13 |
-| PORT-04 | 02-02, 02-03 | ✓ SATISFIED | Truth 4, 12 |
+| TRAD-01 | 02-01, 02-03, 02-04, 02-06 | ✓ SATISFIED | Truths 1, 21, 22 |
+| TRAD-02 | 02-01, 02-03, 02-04, 02-06 | ✓ SATISFIED | Truths 2, 20 |
+| HDR-02 | 02-01, 02-03, 02-05, 02-06 | ✓ SATISFIED (the requirement itself) | Truth 3. The header total equals cash + live value and updates on ticks and trades. The extra G-02-5 order property is the open gap, not the requirement text |
+| PORT-01 | 02-01, 02-03 | ✓ SATISFIED | Truths 1, 6-15 |
+| PORT-02 | 02-01, 02-03 | ✓ SATISFIED | Truths 6-15 (positions-empty) |
+| PORT-03 | 02-02, 02-03 | ✓ SATISFIED | Truths 4, 16 |
+| PORT-04 | 02-02, 02-03 | ✓ SATISFIED | Truths 4, 17, 18 |
 
-All 7 phase IDs appear in plan frontmatter and in REQUIREMENTS.md, mapped to Phase 2. No orphaned requirements.
+All 7 phase IDs appear in plan frontmatter and map to Phase 2 in REQUIREMENTS.md. No requirement is orphaned.
 
 ### Anti-Patterns Found
 
 | File | Line | Pattern | Severity | Impact |
 |------|------|---------|----------|--------|
-| (all phase files) | - | TBD/FIXME/XXX/TODO/HACK | none found | - |
-| frontend/store/terminal.ts | 77-78 | `r.json()` outside the try; a non-JSON 5xx rejects out of placeTrade (review WR-02) | ⚠️ Warning | A server 500 or proxy 502 leaves the previous trade-result text (possibly a green success) on screen. It does not break the TRAD-02 cases (400/422), but it is a misleading error path |
-| frontend/components/TradeBar.tsx | 17, 43-48 | No in-flight guard (review WR-01) | ℹ️ Info | Intended by user decision D-04; a double click places two orders |
-| frontend/store/terminal.ts | 103-105 | One-shot portfolio fetch (review WR-03) | ℹ️ Info | Accepted by plan truth "stays on its loading note with no dedicated error UI" |
-| frontend/components/PnlChart.tsx | 21, 41 | Time axis in UTC (review WR-04) | ℹ️ Info | Cosmetic: axis labels are off for users outside UTC |
+| frontend/store/portfolio.test.ts | 58-67 | The test claims a property it cannot detect (review WR-01) | 🛑 Blocker (for G-02-5) | False assurance for exactly the property the UAT gap asked to prove |
+| frontend/store/portfolio.ts | 11 | Float reduce; the displayed total is order-dependent at half-cent boundaries | ⚠️ Warning | Runtime impact is small: the backend returns positions `ORDER BY ticker`, so the order is fixed in practice. The total can also differ by a cent from the backend's `total_value`, which rounds each position first |
+| frontend/store/terminal.ts | 77-78 | `r.json()` outside the try (earlier WR-02, still open) | ⚠️ Warning | A non-JSON 5xx rejects out of placeTrade and leaves a stale line (possibly a green "Bought …") on screen |
+| test/e2e/03-trading.spec.ts | 30, 49-50 | The sell color equals the inherited body color; the rejected-sell color is not asserted (review IN-01) | ℹ️ Info | The verifier checked the rejected-sell color manually (red) |
+| frontend/app/page.tsx | 29-34 | The Chart panel gets about 140 px at 768x600 (review IN-03) | ℹ️ Info | Phase 3 concern (price chart) |
+| all phase files | - | TBD/FIXME/XXX/TODO/HACK | none | - |
 
 ### Human Verification Required
 
-1. **Heatmap tile legibility.** Run `scripts/start_mac.sh` (restart the running `finally` container so it picks up the rebuilt tag), open http://localhost:8000 at about 1600x1000, and buy AAPL 10, MSFT 5, GOOGL 8, TSLA 4, NVDA 2. Expected: every tile with at least 10% of invested value shows a readable ticker and P&L %.
-2. **P&L canvas sizing.** Expected: the chart fills its panel with no scrollbar and does not grow or jitter over a minute or after one window resize.
-3. **Trade bar visuals.** Expected: Buy is green, Sell is red, and a long rejection stays on one line with the full text on hover.
-4. **History race (backstop).** A trade near a 30 s poll: the snapshot appears after the trade or on the next poll, with no chart error.
-5. **Total order independence (backstop).** Accept as low risk or ask for a unit test.
-6. **Flagged prohibition:** success-line price comes only from the response (read terminal.ts:81-83).
-7. **Flagged prohibition:** confirm the package legitimacy approval came before commit 9485445.
+1. **G-02-1 and G-02-3 visual retest.** Run `scripts/start_mac.sh` and open http://localhost:8000 at 1600x1000. Buy 1 AAPL, sell 1 AAPL, then try to sell 1000 AAPL. Expected: Bought is green, Sold is light neutral text, and the rejection is red. At about 800 px with the chat drawer open, Buy and Sell are visible with no scrolling inside the Trade panel. At full width the bar is one row.
+2. **Flagged prohibition (02-05).** Confirm you approved vitest 5.0.2, vite 8.x and @types/node ^24 before commit fe894d3.
 
 ### Gaps Summary
 
-No blocking gaps. All five ROADMAP success criteria were confirmed by the verifier's own runs: 9 passed locally and 9 passed in the Docker compose gate, the portfolio probe passed, and a 27-assertion edge check covered positions-empty, rejections leaving positions unchanged, sell-to-zero, alphabetical rows, the total identity and the post-trade chart refresh. All seven requirement IDs are satisfied.
+Most of the phase goal is achieved. All five ROADMAP success criteria were re-proven by the verifier's own runs: 10 passed locally on a fresh DB, 10 passed on the Docker compose path, and the probe passed. All seven requirement IDs are satisfied. G-02-1 and G-02-3 are closed in the code: the verifier's scratch check covered the whole 768-850 px range plus wider widths, and all three result-line colors, including the rejected-sell case that no test asserts.
 
-The status is human_needed, not passed, for two reasons. Four backstop truths (tile legibility, canvas sizing, history race, total order independence) cannot be proven by presence checks. Two test-tier prohibitions have no dedicated enforcement test. One non-blocking warning is worth a follow-up: WR-02, where a non-JSON error response leaves stale text in trade-result.
+One gap remains: **G-02-5 is not closed.** Its truth says the header total does not depend on summation order, proven by a unit test. That property is false for the shipped `selectTotalValue`: two orders of the same state give "$11,899.15" and "$11,899.14". The committed test cannot detect this, because its only fixture sits 0.0005 from a rounding boundary, and it passes on the order-dependent code. The user-visible effect today is negligible, since the backend returns positions in a fixed order. But the UAT asked for a proof, and the test gives a false one. Close it one of two ways:
+
+- **Fix (recommended):** sum in integer cents, add the boundary fixture, and assert exact equality across permutations, test-first.
+- **Accept:** restate the truth to what actually holds (orderings agree within 1e-9, and the runtime order is fixed) and record an override:
+
+```yaml
+overrides:
+  - must_have: "Header total does not depend on the order positions are summed, proven by a unit test that holds state fixed and sums positions in different orders"
+    reason: "Positions arrive ORDER BY ticker from the backend, so the runtime order is fixed; the float sum agrees across orders within 1e-9 and can differ by one displayed cent only at half-cent boundaries"
+    accepted_by: "{name}"
+    accepted_at: "{ISO timestamp}"
+```
+
+Environment notes: the build, local E2E, probe, Docker and pytest ran with the sandbox off (localhost, Docker socket, uv cache). Every scratch file the verifier created in the repo was removed; `git status` for frontend and test is clean.
 
 ---
 
-_Verified: 2026-09-26T08:40:00Z_
+_Verified: 2026-09-27T00:45:00Z_
 _Verifier: Claude (gsd-verifier)_
