@@ -148,7 +148,7 @@ The Phase 1 grid in `frontend/app/page.tsx` is unchanged, except that the Trade 
 
 ### Header total (`components/Header.tsx`)
 
-- `total-value` = `selectTotalValue` (cash + Σ qty × live price), a primitive selector (HDR-02). The markup and style are unchanged from Phase 1 (16px mono, `text-text`). The value is not colored and does not flash (flash is v2).
+- `total-value` = `selectTotalValue` (cash plus each position's live value, summed in whole cents with each position rounded to cents as the backend does, UAT G-02-5), a primitive selector (HDR-02). The markup and style are unchanged from Phase 1 (16px mono, `text-text`). The value is not colored and does not flash (flash is v2).
 
 ### Number formatting (`store/format.ts`, en-US, extends Phase 1)
 
@@ -209,7 +209,7 @@ Probe run 2026-09-26 (ui-consideration-probe, 19 applicable). Element kinds were
 | zero-one-many | Positions table, Heatmap | ✅ covered | 0 shows the empty copy, 1 is a single row and a single tile filling the heatmap, many gives alphabetical rows and a squarified mosaic. No pluralized copy is needed |
 | long-text | `trade-result` (long backend error, e.g. insufficient cash with large numbers) | ✅ covered | Single line with `truncate` plus `title` for the full text. The E2E `toContainText` reads textContent, so truncation does not affect it |
 | long-text | Heatmap tile P&L % width in narrow tiles | 🧪 backstop | Visual check at 1600×1000 with 3–6 positions: ticker and % are legible in tiles holding ≥10% weight |
-| loading | Header total value | ✅ covered | While `cash === null`, `selectTotalValue` returns `null` and `total-value` is not rendered, the same as Phase 1. Once loaded it always equals cash + Σ qty × live price (fallback `current_price`) |
+| loading | Header total value | ✅ covered | While `cash === null`, `selectTotalValue` returns `null` and `total-value` is not rendered, the same as Phase 1. Once loaded it always equals cash plus each position's live value (fallback `current_price`), summed in whole cents with each position rounded to cents as the backend does (UAT G-02-5) |
 | populated | P&L chart sizing inside the 32%-height bottom row | 🧪 backstop | Visual check at 1600×1000: the canvas fills the panel body with no scrollbar feedback loop (02-RESEARCH A5) |
 
 ---
