@@ -1,9 +1,10 @@
 ---
 phase: 02-trading-portfolio
 verified: 2026-09-27T02:34:31Z
-status: human_needed
+status: passed
 score: 40/41 must-haves verified (0 failed, 1 needs human confirmation; 1 superseded truth excluded)
 covered_files:
+
   - .planning/REQUIREMENTS.md
   - .planning/phases/02-trading-portfolio/02-01-PLAN.md
   - .planning/phases/02-trading-portfolio/02-01-SUMMARY.md
@@ -35,6 +36,7 @@ covered_files:
   - test/README.md
   - test/e2e/03-trading.spec.ts
   - test/portfolio-probe.mjs
+
 covered_digest: "v1:sha256:699c7bb591356fd75b81928ea4cb20047e1e1c64b3bf69068dea893534b38c06"
 behavior_unverified: 0
 overrides_applied: 0
@@ -47,11 +49,13 @@ re_verification:
   gaps_remaining: []
   regressions: []
 advisory:
+
   - finding: "WR-01 (review 96e772c): the header's per-position cent rounding (JS Math.round(v*100), ties up after the x100 multiply) differs from the backend's Python round(market_value, 2) (exact binary value, ties to even). For a fractional holding whose value sits on or near a half cent, the header total and /api/portfolio total_value (and so the latest P&L snapshot) differ by one cent per affected position. The docstring at frontend/store/portfolio.ts:14, the test name at portfolio.test.ts:85, and 02-UI-SPEC.md lines 151 and 212 say 'as the backend does', which is false in general."
     category: other
     reason: "Evidenced (the verifier reproduced it: cash 9904.87 + 0.5 x 190.13 gives header $9,999.94 and backend total_value 9999.93), but it does not break any must-have: HDR-02 and SC3 define the header as cash + live positions value, which both sides represent to the cent; no truth or requirement ties the header to the backend's total_value; and 02-07's edge table recorded this exact per-position tie as a flagged assumption outside G-02-5. Recorded as a warning, not a gap. Resolve by either (a) removing 'as the backend does' from the docstring, the test name and the two UI-SPEC lines, or (b) making one rounding rule shared by both sides (review WR-01 fix) and adding a per-position-tie unit test."
     evidence_status: "reproduced by the verifier (node + uv run python); non-blocking by judgment"
 human_verification:
+
   - test: "Run scripts/start_mac.sh first (the running finally container uses image 43e7664, built before 02-07; the rebuilt finally tag is e609d826). Open http://localhost:8000 at about 1600x1000. Buy 1 AAPL, sell 1 AAPL, then try to sell 1000 AAPL. Narrow the window to about 800 px with the AI chat drawer open."
     expected: "The Bought line is green, the Sold line is the normal light text color, and the rejection is red. At about 800 px, Buy and Sell are visible under the inputs with no scrolling inside the Trade panel. At full width the trade bar is one row."
     why_human: "The user's own visual retest of G-02-1 and G-02-3 (end-of-phase check carried from 02-06). The E2E suite passed these assertions in the verifier's local and compose runs, so this is confirmation, not discovery."

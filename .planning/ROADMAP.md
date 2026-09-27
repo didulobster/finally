@@ -14,7 +14,7 @@ The backend, Docker setup, scripts, and E2E suite already exist. The missing pie
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Live Terminal in Docker** - Verified backend plus a Next.js shell served from the container, streaming the default watchlist with cash and connection status (completed 2026-09-26)
-- [ ] **Phase 2: Trading & Portfolio** - Buy/sell from the trade bar and see positions, heatmap, P&L chart, and live total value
+- [x] **Phase 2: Trading & Portfolio** - Buy/sell from the trade bar and see positions, heatmap, P&L chart, and live total value (completed 2026-09-27)
 - [ ] **Phase 3: Watchlist Management & Ticker Chart** - Add/remove tickers that persist, and click a ticker to see its live chart
 - [ ] **Phase 4: AI Copilot & Definition of Done** - Chat with the AI to analyze, trade, and manage the watchlist; all 6 E2E specs green in Docker
 
@@ -152,6 +152,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Live Terminal in Docker | 6/6 | Complete    | 2026-09-26 |
-| 2. Trading & Portfolio | 7/7 | In Progress|  |
+| 2. Trading & Portfolio | 7/7 | Complete    | 2026-09-27 |
 | 3. Watchlist Management & Ticker Chart | 0/TBD | Not started | - |
 | 4. AI Copilot & Definition of Done | 0/TBD | Not started | - |

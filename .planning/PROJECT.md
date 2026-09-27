@@ -31,16 +31,16 @@ One `docker run` opens `http://localhost:8000` to a live, data-dense trading ter
 - ✓ Header with cash balance and connection status dot; stream recovers without reload, including after a non-200 reconnect (HDR-01/03/04) — Phase 1
 - ✓ Watchlist panel with the 10 default tickers, live price and change % (WTCH-01) — Phase 1
 - ✓ Docker image builds; container serves the app on :8000 with a persistent volume (DLVR-01) — Phase 1
+- ✓ Portfolio heatmap (treemap sized by weight, colored by P&L) — Phase 2
+- ✓ P&L line chart from portfolio snapshots — Phase 2
+- ✓ Positions table (ticker, qty, avg cost, price, unrealized P&L, % change) — Phase 2
+- ✓ Trade bar (ticker, quantity, buy/sell market orders) — Phase 2
+- ✓ Header total value updating live on every tick and after trades (HDR-02) — Phase 2
 
 ### Active
 
 - [ ] Main chart for the selected ticker (click in the watchlist to select)
-- [ ] Portfolio heatmap (treemap sized by weight, colored by P&L)
-- [ ] P&L line chart from portfolio snapshots
-- [ ] Positions table (ticker, qty, avg cost, price, unrealized P&L, % change)
-- [ ] Trade bar (ticker, quantity, buy/sell market orders)
 - [ ] AI chat panel (history, loading state, inline trade and watchlist confirmations)
-- [ ] Header total value updating live on every tick and after trades (HDR-02)
 - [ ] Watchlist add/remove from the UI
 - [ ] All 6 existing Playwright E2E specs pass in Docker with `LLM_MOCK=true`
 
@@ -82,7 +82,10 @@ One `docker run` opens `http://localhost:8000` to a live, data-dense trading ter
 | Cloud deploy excluded from v1 | PLAN.md marks it as a stretch goal | — Pending |
 | Phase 1 frontend tree (app/, components/, store/) is canonical; `frontend/src` and vitest removed | A second app tree broke the build (G-01-1) | ✓ Good — build restored (01-04) |
 | Reopen the EventSource 3 s after readyState CLOSED (amends D-10) | Browser stops retrying after a non-200 reconnect (WR-01, UAT "fix it now") | ✓ Good — 502 probe passes, one live stream at a time (01-05) |
-| Zustand single store + one EventSource via `connect()` | Simple shared state for header, watchlist, later panels | — Pending (validate as panels land) |
+| Zustand single store + one EventSource via `connect()` | Simple shared state for header, watchlist, later panels | ✓ Good — trade bar, portfolio panels and header total all read one store (Phase 2) |
+| Header total derived client-side, summed in whole cents | Live on every tick and independent of position order (G-02-5) | ✓ Good — 02-07, unit test pins the half-cent boundary |
+| Lightweight Charts (canvas) for P&L; d3-hierarchy for the heatmap | Canvas charting preferred by PLAN.md; exact pins after human approval | ✓ Good — Phase 2 |
+| Vitest 5.0.2 as the frontend unit runner (no DOM env) | Needed to pin the total-value selector; RTL tests stay in v2 | ✓ Good — 02-05 |
 
 ## Evolution
 
@@ -102,4 +105,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-09-26 after Phase 1*
+*Last updated: 2026-09-27 after Phase 2*
