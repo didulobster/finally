@@ -1,0 +1,83 @@
+- generic [active] [ref=e1]:
+  - main [ref=e2]:
+    - generic [ref=e4]:
+      - generic [ref=e5]: FinAlly
+      - generic [ref=e6]:
+        - generic [ref=e7]: Total value
+        - generic [ref=e8]: $10,353.98
+      - generic [ref=e9]:
+        - generic [ref=e10]: Cash
+        - generic [ref=e11]: $8,657.61
+      - status [ref=e13]:
+        - generic [ref=e15]: LIVE
+    - generic [ref=e16]:
+      - generic [ref=e17]:
+        - heading "Watchlist" [level=2] [ref=e18]
+        - generic [ref=e20]:
+          - generic [ref=e21]:
+            - generic [ref=e22]: AAPL
+            - generic [ref=e23]: $190.02
+            - generic [ref=e24]: +0.01%
+          - generic [ref=e25]:
+            - generic [ref=e26]: GOOGL
+            - generic [ref=e27]: $175.05
+            - generic [ref=e28]: +0.03%
+          - generic [ref=e29]:
+            - generic [ref=e30]: MSFT
+            - generic [ref=e31]: $419.99
+            - generic [ref=e32]: 0.00%
+          - generic [ref=e33]:
+            - generic [ref=e34]: AMZN
+            - generic [ref=e35]: $185.04
+            - generic [ref=e36]: +0.02%
+          - generic [ref=e37]:
+            - generic [ref=e38]: TSLA
+            - generic [ref=e39]: $250.05
+            - generic [ref=e40]: +0.02%
+          - generic [ref=e41]:
+            - generic [ref=e42]: NVDA
+            - generic [ref=e43]: $799.85
+            - generic [ref=e44]: "-0.02%"
+          - generic [ref=e45]:
+            - generic [ref=e46]: META
+            - generic [ref=e47]: $499.87
+            - generic [ref=e48]: "-0.03%"
+          - generic [ref=e49]:
+            - generic [ref=e50]: JPM
+            - generic [ref=e51]: $194.96
+            - generic [ref=e52]: "-0.02%"
+          - generic [ref=e53]:
+            - generic [ref=e54]: V
+            - generic [ref=e55]: $279.94
+            - generic [ref=e56]: "-0.02%"
+          - generic [ref=e57]:
+            - generic [ref=e58]: NFLX
+            - generic [ref=e59]: $600.06
+            - generic [ref=e60]: +0.01%
+          - generic [ref=e61]:
+            - generic [ref=e62]: FIG
+            - generic [ref=e63]: $248.43
+            - generic [ref=e64]: +0.02%
+      - generic [ref=e65]:
+        - generic [ref=e66]:
+          - heading "Chart" [level=2] [ref=e67]
+          - paragraph [ref=e69]: The price chart for the selected ticker arrives in Phase 3.
+        - generic [ref=e70]:
+          - heading "Trade" [level=2] [ref=e71]
+          - paragraph [ref=e73]: The trade bar arrives in Phase 2.
+      - complementary [ref=e74]:
+        - generic [ref=e75]:
+          - heading "AI Assistant" [level=2] [ref=e76]
+          - button "Collapse chat" [expanded] [ref=e77]: »
+        - paragraph [ref=e79]: The AI assistant arrives in Phase 4.
+    - generic [ref=e80]:
+      - generic [ref=e81]:
+        - heading "Heatmap" [level=2] [ref=e82]
+        - paragraph [ref=e84]: The portfolio heatmap arrives in Phase 2.
+      - generic [ref=e85]:
+        - heading "P&L" [level=2] [ref=e86]
+        - paragraph [ref=e88]: The portfolio value chart arrives in Phase 2.
+      - generic [ref=e89]:
+        - heading "Positions" [level=2] [ref=e90]
+        - paragraph [ref=e92]: The positions table arrives in Phase 2.
+  - alert [ref=e93]
