@@ -3,16 +3,16 @@ gsd_state_version: "1.0"
 current_phase: 02
 current_phase_name: Trading & Portfolio
 status: executing
-stopped_at: Completed 02-06-PLAN.md
-last_updated: "2026-09-27T00:57:25.690Z"
+stopped_at: Completed 02-07-PLAN.md
+last_updated: "2026-09-27T02:26:23.889Z"
 last_activity: 2026-09-27
 last_activity_desc: Phase 02 execution started
-state_head: 5bbfc88039ffbd1b1721550737042c8c7428c772
+state_head: df00fd177a713d0971b2d543cc0bfc8839bd4d83
 progress:
   total_phases: 4
   completed_phases: 1
   total_plans: 13
-  completed_plans: 12
+  completed_plans: 13
   percent: 25
 ---
 
@@ -27,8 +27,8 @@ See: .planning/PROJECT.md (updated 2026-09-26)
 
 ## Current Position
 
-Phase: 02 (Trading & Portfolio) — READY TO EXECUTE
-Plan: 6 of 6
+Phase: 02 (Trading & Portfolio) — EXECUTING
+Plan: 2 of 7
 Status: Ready to execute
 Last activity: 2026-09-27 — Phase 02 execution started
 
@@ -70,6 +70,7 @@ Progress: [███░░░░░░░] 25%
 | Phase 02 P04 | 5min | 2 tasks | 6 files |
 | Phase 02 P05 | 2min | 2 tasks | 4 files |
 | Phase 02 P06 | 2min | 2 tasks | 0 files |
+| Phase 02 P07 | 4min | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -100,6 +101,7 @@ Recent decisions affecting current work:
 - [Phase 02]: 02-05: user approved vitest 5.0.2, vite 8.x peer, @types/node ^24 at the blocking-human gate (T-02-SC2); npm resolved exactly the approved tree (51 new lockfile entries, fsevents the only new install script)
 - [Phase 02]: 02-05: frontend unit runner is vitest 5.0.2 (npm test = vitest run), no config, no DOM env; TEST-01 RTL tests stay deferred to v2
 - [Phase 02]: 02-06: compose path ran (no fallback); Phase 2 binding set reports 10 passed in the container including the 02-04 gap-closure assertions; finally tag rebuilt at 5fab1b4
+- [Phase 02]: 02-07: G-02-5 closed by fixing selectTotalValue to sum whole cents (per-position cents like backend get_portfolio), not by an override
 
 ### Pending Todos
 
@@ -119,6 +121,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-09-27T00:22:48.989Z
-Stopped at: Completed 02-06-PLAN.md
+Last session: 2026-09-27T02:26:23.873Z
+Stopped at: Completed 02-07-PLAN.md
 Resume file: None
