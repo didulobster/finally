@@ -14,7 +14,7 @@ The backend, Docker setup, scripts, and E2E suite already exist. The missing pie
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Live Terminal in Docker** - Verified backend plus a Next.js shell served from the container, streaming the default watchlist with cash and connection status (completed 2026-09-26)
-- [ ] **Phase 2: Trading & Portfolio** - Buy/sell from the trade bar and see positions, heatmap, P&L chart, and live total value
+- [x] **Phase 2: Trading & Portfolio** - Buy/sell from the trade bar and see positions, heatmap, P&L chart, and live total value (completed 2026-09-27)
 - [ ] **Phase 3: Watchlist Management & Ticker Chart** - Add/remove tickers that persist, and click a ticker to see its live chart
 - [ ] **Phase 4: AI Copilot & Definition of Done** - Chat with the AI to analyze, trade, and manage the watchlist; all 6 E2E specs green in Docker
 
@@ -77,7 +77,37 @@ Plans:
   4. With positions held, the user sees a treemap heatmap sized by weight, with tiles colored green for profit and red for loss, and a canvas P&L line chart of portfolio value from snapshots; with no positions, an empty-positions message is shown
   5. The E2E specs `03-trading` and `04-portfolio-viz` pass against the container
 
-**Plans**: TBD
+**Plans**: 7/7 plans executed (02-04..02-07 are gap closure)
+
+Plans:
+**Wave 1**
+
+- [x] 02-01-PLAN.md — Trade bar to store to header and positions (tracer), then live derived total/P&L, positions empty/loading states and the portfolio probe; local 01 + 03 + 06 green (TRAD-01, TRAD-02, HDR-02, PORT-01, PORT-02)
+
+**Wave 2** *(blocked on Wave 1 completion)*
+
+- [x] 02-02-PLAN.md — Package legitimacy checkpoint (blocking-human), P&L chart on Lightweight Charts (tracer), then the d3-hierarchy heatmap; local 01 + 03 + 04 + 06 green (PORT-03, PORT-04)
+
+**Wave 3** *(blocked on Wave 2 completion)*
+
+- [x] 02-03-PLAN.md — Rebuild the `finally` tag and pass the probe in a container (tracer), then the compose Docker gate (9 passed), pytest, integrity gates, probe docs and end-of-phase visual checks
+
+**Wave 4** *(gap closure: G-02-3, G-02-1)*
+
+- [x] 02-04-PLAN.md — Sell fill line in neutral text (buy green, rejection red) via a side on TradeResult (tracer), then a content-sized Trade panel so Buy/Sell stay visible at 768-850 px with chat open; both test-first with added 03-trading assertions; UI-SPEC and D-02 amended (TRAD-01, TRAD-02)
+
+**Wave 5** *(gap closure: G-02-5; blocked on Wave 4 completion)*
+
+- [x] 02-05-PLAN.md — Package legitimacy checkpoint (blocking-human) for vitest 5.0.2 and @types/node ^24, then a minimal Vitest runner and a fixed-state test that selectTotalValue gives the same header total in all 24 position orders (HDR-02)
+
+**Wave 6** *(gap closure: G-02-1, G-02-3, G-02-5; blocked on Wave 5 completion)*
+
+- [x] 02-06-PLAN.md — Rebuild the `finally` tag and probe a throwaway container (tracer), then the compose gate (10 passed), frontend unit test, integrity gates and the user's visual retest
+
+**Wave 7** *(gap closure: G-02-5 re-opened by verification; blocked on Wave 6 completion)*
+
+- [x] 02-07-PLAN.md — Half-cent boundary test, red on the float reduce, then selectTotalValue summed in whole cents with exact equality across every order (tracer, with local E2E and probe on port 8010), then rebuild the `finally` tag and rerun the compose gate (10 passed) (HDR-02)
+
 **UI hint**: yes
 
 ### Phase 3: Watchlist Management & Ticker Chart
@@ -122,6 +152,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Live Terminal in Docker | 6/6 | Complete    | 2026-09-26 |
-| 2. Trading & Portfolio | 0/TBD | Not started | - |
+| 2. Trading & Portfolio | 7/7 | Complete    | 2026-09-27 |
 | 3. Watchlist Management & Ticker Chart | 0/TBD | Not started | - |
 | 4. AI Copilot & Definition of Done | 0/TBD | Not started | - |

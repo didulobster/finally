@@ -1,6 +1,7 @@
 "use client";
 
 import { formatPrice } from "@/store/format";
+import { selectTotalValue } from "@/store/portfolio";
 import { useTerminal, type Status } from "@/store/terminal";
 
 const STATUS_STYLE: Record<Status, { dot: string; label: string }> = {
@@ -11,7 +12,7 @@ const STATUS_STYLE: Record<Status, { dot: string; label: string }> = {
 
 /** Top bar: brand, total value, cash, and the stream status dot. */
 export function Header() {
-  const totalValue = useTerminal((s) => s.totalValue);
+  const totalValue = useTerminal(selectTotalValue);
   const cash = useTerminal((s) => s.cash);
   return (
     <header className="flex w-full items-center gap-6 border-b border-border bg-panel px-4 py-2">

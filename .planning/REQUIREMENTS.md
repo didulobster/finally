@@ -20,7 +20,7 @@ Requirements for initial release. Each maps to roadmap phases. The six specs in 
 ### Header & Connection
 
 - [x] **HDR-01**: User sees their cash balance (`cash-balance`) in the header
-- [ ] **HDR-02**: User sees total portfolio value (`total-value` = cash + live positions value), updating on every price tick and after every trade
+- [x] **HDR-02**: User sees total portfolio value (`total-value` = cash + live positions value), updating on every price tick and after every trade
 - [x] **HDR-03**: User sees a connection status dot (`connection-status`, `data-status`) that is green/connected, yellow/reconnecting, or red/disconnected
 - [x] **HDR-04**: When the SSE connection drops and returns, the status goes back to connected and prices resume without a page reload
 
@@ -39,15 +39,15 @@ Requirements for initial release. Each maps to roadmap phases. The six specs in 
 
 ### Trading
 
-- [ ] **TRAD-01**: User can buy or sell any typed ticker and quantity via `trade-ticker`, `trade-quantity`, `trade-buy`, `trade-sell` (market order, instant fill)
-- [ ] **TRAD-02**: A rejected trade shows the backend error text verbatim in `trade-result` (e.g. "insufficient cash", "insufficient shares") and leaves cash and positions unchanged
+- [x] **TRAD-01**: User can buy or sell any typed ticker and quantity via `trade-ticker`, `trade-quantity`, `trade-buy`, `trade-sell` (market order, instant fill)
+- [x] **TRAD-02**: A rejected trade shows the backend error text verbatim in `trade-result` (e.g. "insufficient cash", "insufficient shares") and leaves cash and positions unchanged
 
 ### Portfolio
 
-- [ ] **PORT-01**: User sees a positions table (`position-row-{TICKER}`, `position-qty-{TICKER}`) with ticker, quantity, avg cost, current price, unrealized P&L, and % change; a position sold to zero disappears
-- [ ] **PORT-02**: User sees `positions-empty` when they hold no positions
-- [ ] **PORT-03**: User sees a treemap heatmap (`heatmap`, `heatmap-cell-{TICKER}`) sized by portfolio weight, where `data-pnl` is up/down/flat and the rendered background color agrees (green for up, red for down)
-- [ ] **PORT-04**: User sees a canvas P&L line chart (`pnl-chart`, `data-points`) of total portfolio value from `/api/portfolio/history`
+- [x] **PORT-01**: User sees a positions table (`position-row-{TICKER}`, `position-qty-{TICKER}`) with ticker, quantity, avg cost, current price, unrealized P&L, and % change; a position sold to zero disappears
+- [x] **PORT-02**: User sees `positions-empty` when they hold no positions
+- [x] **PORT-03**: User sees a treemap heatmap (`heatmap`, `heatmap-cell-{TICKER}`) sized by portfolio weight, where `data-pnl` is up/down/flat and the rendered background color agrees (green for up, red for down)
+- [x] **PORT-04**: User sees a canvas P&L line chart (`pnl-chart`, `data-points`) of total portfolio value from `/api/portfolio/history`
 
 ### AI Chat
 
@@ -100,7 +100,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | FND-01 | Phase 1 | Complete |
 | FND-02 | Phase 1 | Complete |
 | HDR-01 | Phase 1 | Complete |
-| HDR-02 | Phase 2 | Pending |
+| HDR-02 | Phase 2 | Complete |
 | HDR-03 | Phase 1 | Complete |
 | HDR-04 | Phase 1 | Complete |
 | WTCH-01 | Phase 1 | Complete |
@@ -110,12 +110,12 @@ Which phases cover which requirements. Updated during roadmap creation.
 | WTCH-05 | Phase 3 | Pending |
 | CHRT-01 | Phase 3 | Pending |
 | CHRT-02 | Phase 3 | Pending |
-| TRAD-01 | Phase 2 | Pending |
-| TRAD-02 | Phase 2 | Pending |
-| PORT-01 | Phase 2 | Pending |
-| PORT-02 | Phase 2 | Pending |
-| PORT-03 | Phase 2 | Pending |
-| PORT-04 | Phase 2 | Pending |
+| TRAD-01 | Phase 2 | Complete |
+| TRAD-02 | Phase 2 | Complete |
+| PORT-01 | Phase 2 | Complete |
+| PORT-02 | Phase 2 | Complete |
+| PORT-03 | Phase 2 | Complete |
+| PORT-04 | Phase 2 | Complete |
 | CHAT-01 | Phase 4 | Pending |
 | CHAT-02 | Phase 4 | Pending |
 | CHAT-03 | Phase 4 | Pending |

@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { formatPrice, formatQty } from "./format";
 
 /** Price stream connection state shown by the header status dot. */
 export type Status = "connected" | "reconnecting" | "disconnected";
@@ -16,13 +17,25 @@ export type Price = {
   session_change_percent: number;
 };
 
-/** The whole client state: connection, live prices, watchlist order, and cash. */
+/** A held position as returned by /api/portfolio. */
+export type Position = { ticker: string; quantity: number; avg_cost: number; current_price: number };
+
+type Portfolio = { cash_balance: number; positions: Position[] };
+
+/** Outcome of a trade, shown by the trade bar; it carries the trade side. */
+export type TradeResult = { ok: boolean; side: "buy" | "sell"; text: string };
+
+/** One stored portfolio value from /api/portfolio/history. */
+export type Snapshot = { total_value: number; recorded_at: string };
+
+/** The whole client state: connection, live prices, watchlist order, cash, positions, and value history. */
 export type TerminalState = {
   status: Status;
   prices: Record<string, Price>;
   watchlist: string[];
   cash: number | null;
-  totalValue: number | null;
+  positions: Position[];
+  history: Snapshot[];
 };
 
 type WatchlistItem = Price | { ticker: string; price: null };
@@ -33,8 +46,42 @@ export const useTerminal = create<TerminalState>()(() => ({
   prices: {},
   watchlist: [],
   cash: null,
-  totalValue: null,
+  positions: [],
+  history: [],
 }));
+
+/** Write a server portfolio (GET /api/portfolio or a trade response) into the store. */
+export function applyPortfolio(p: Portfolio): void {
+  useTerminal.setState({ cash: p.cash_balance, positions: p.positions });
+}
+
+/** Replace the stored portfolio value history with the server's full ordered list. */
+export function loadHistory(): void {
+  fetch("/api/portfolio/history")
+    .then((r) => r.json())
+    .then((history: Snapshot[]) => useTerminal.setState({ history }));
+}
+
+/** Place a market order; the store changes only when the server fills it. */
+export async function placeTrade(ticker: string, quantity: number, side: "buy" | "sell"): Promise<TradeResult> {
+  let r: Response;
+  try {
+    r = await fetch("/api/portfolio/trade", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ticker, quantity, side }),
+    });
+  } catch {
+    return { ok: false, side, text: "Trade not sent: connection to the server failed. Try again." };
+  }
+  const body = await r.json();
+  if (!r.ok) return { ok: false, side, text: typeof body.detail === "string" ? body.detail : body.detail[0].msg };
+  applyPortfolio(body.portfolio);
+  loadHistory();
+  const t = body.trade;
+  const verb = t.side === "buy" ? "Bought" : "Sold";
+  return { ok: true, side: t.side, text: `${verb} ${formatQty(t.quantity)} ${t.ticker} @ ${formatPrice(t.price)}` };
+}
 
 // A non-200 or non-event-stream response closes an EventSource for good; the browser stops retrying.
 const REOPEN_DELAY_MS = 3000;
@@ -55,7 +102,7 @@ export function connect(): () => void {
     });
   fetch("/api/portfolio")
     .then((r) => r.json())
-    .then((p) => useTerminal.setState({ cash: p.cash_balance, totalValue: p.total_value }));
+    .then(applyPortfolio);
 
   let es: EventSource;
   let timer: ReturnType<typeof setTimeout> | undefined;
