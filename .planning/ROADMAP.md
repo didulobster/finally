@@ -77,7 +77,7 @@ Plans:
   4. With positions held, the user sees a treemap heatmap sized by weight, with tiles colored green for profit and red for loss, and a canvas P&L line chart of portfolio value from snapshots; with no positions, an empty-positions message is shown
   5. The E2E specs `03-trading` and `04-portfolio-viz` pass against the container
 
-**Plans**: 6/6 plans executed (02-04..02-06 are UAT gap closure)
+**Plans**: 6/7 plans executed (02-04..02-07 are gap closure)
 
 Plans:
 **Wave 1**
@@ -103,6 +103,10 @@ Plans:
 **Wave 6** *(gap closure: G-02-1, G-02-3, G-02-5; blocked on Wave 5 completion)*
 
 - [x] 02-06-PLAN.md — Rebuild the `finally` tag and probe a throwaway container (tracer), then the compose gate (10 passed), frontend unit test, integrity gates and the user's visual retest
+
+**Wave 7** *(gap closure: G-02-5 re-opened by verification; blocked on Wave 6 completion)*
+
+- [ ] 02-07-PLAN.md — Half-cent boundary test, red on the float reduce, then selectTotalValue summed in whole cents with exact equality across every order (tracer, with local E2E and probe on port 8010), then rebuild the `finally` tag and rerun the compose gate (10 passed) (HDR-02)
 
 **UI hint**: yes
 
